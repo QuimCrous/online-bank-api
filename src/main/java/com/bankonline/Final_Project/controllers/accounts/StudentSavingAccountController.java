@@ -1,0 +1,8 @@
+package com.bankonline.Final_Project.controllers.accounts;
+
+import com.bankonline.Final_Project.controllers.accounts.interfaces.StudentSavingAccountControllerInterface;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class StudentSavingAccountController implements StudentSavingAccountControllerInterface {
+}
