@@ -33,18 +33,17 @@ public abstract class Account {
             @AttributeOverride(name="currency", column = @Column(name = "fee_currency")),
             @AttributeOverride(name = "amount", column = @Column(name = "fee_amount"))
     })
-    private Money penaltyFee = new Money(BigDecimal.valueOf(40L));
+    private final Money penaltyFee = new Money(BigDecimal.valueOf(40L));
 
     public Account() {
     }
 
-    public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, LocalDate creationDate, Status status, Money penaltyFee) {
+    public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, LocalDate creationDate, Status status) {
         this.balance = balance;
         this.primaryOwner = primaryOwner;
         this.secondaryOwner = secondaryOwner;
         this.creationDate = creationDate;
         this.status = status;
-        this.penaltyFee = penaltyFee;
     }
 
     public Long getId() {
@@ -91,9 +90,6 @@ public abstract class Account {
         return penaltyFee;
     }
 
-    public void setPenaltyFee(Money penaltyFee) {
-        this.penaltyFee = penaltyFee;
-    }
 
     public AccountHolder getPrimaryOwner() {
         return primaryOwner;

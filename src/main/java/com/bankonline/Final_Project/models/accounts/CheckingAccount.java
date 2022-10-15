@@ -20,7 +20,7 @@ public class CheckingAccount extends Account{
     }
 
     public CheckingAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, LocalDate creationDate, Status status, Money penaltyFee, Money minimumBalance, BigDecimal monthlyMaintenanceFee, LocalDate lastInterestDay) {
-        super(balance, primaryOwner, secondaryOwner, creationDate, status, penaltyFee);
+        super(balance, primaryOwner, secondaryOwner, creationDate, status);
         this.minimumBalance = minimumBalance;
         this.monthlyMaintenanceFee = monthlyMaintenanceFee;
         this.lastInterestDay = lastInterestDay;
