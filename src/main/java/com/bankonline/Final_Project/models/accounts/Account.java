@@ -1,14 +1,11 @@
 package com.bankonline.Final_Project.models.accounts;
-
 import com.bankonline.Final_Project.embedables.Money;
 import com.bankonline.Final_Project.enums.Status;
 import com.bankonline.Final_Project.models.users.AccountHolder;
-import com.bankonline.Final_Project.models.users.User;
-
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Optional;
+
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -22,7 +19,8 @@ public abstract class Account {
     @ManyToOne
     @JoinColumn(name = "primary_owner_user_id")
     private AccountHolder primaryOwner;
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "secondary_owner_user_id")
     private AccountHolder secondaryOwner;
 
     private LocalDate creationDate;
@@ -37,6 +35,12 @@ public abstract class Account {
 
     public Account() {
     }
+
+//    public Account(AccountHolder primaryOwner, LocalDate creationDate, Status status) {
+//        this.primaryOwner = primaryOwner;
+//        this.creationDate = creationDate;
+//        this.status = status;
+//    }
 
     public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, LocalDate creationDate, Status status) {
         this.balance = balance;

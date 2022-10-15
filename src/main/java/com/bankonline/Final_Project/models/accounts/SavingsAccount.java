@@ -20,6 +20,11 @@ public class SavingsAccount extends Account{
     public SavingsAccount() {
     }
 
+//    public SavingsAccount(AccountHolder primaryOwner, LocalDate creationDate, Status status, LocalDate lastInterestRate) {
+//        super(primaryOwner, creationDate, status);
+//        this.lastInterestRate = lastInterestRate;
+//    }
+
     public SavingsAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, LocalDate creationDate, Status status, Money penaltyFee, Money minimumBalance, BigDecimal interestRate, LocalDate lastInterestRate) {
         super(balance, primaryOwner, secondaryOwner, creationDate, status);
         this.minimumBalance = minimumBalance;
