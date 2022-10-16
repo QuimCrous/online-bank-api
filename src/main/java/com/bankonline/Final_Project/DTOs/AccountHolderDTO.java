@@ -3,31 +3,41 @@ package com.bankonline.Final_Project.DTOs;
 import com.bankonline.Final_Project.embedables.Address;
 
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class AccountHolderDTO {
     private String name;
-    private String phone;
     private String mail;
+    private String phone;
     private LocalDate birthDate;
-    private Address primaryAddress;
-    private Address mailingAddress;
 
-    public AccountHolderDTO(String name, String phone, String mail, LocalDate birthDate, Address primaryAddress) {
+    private String accountType;
+    private BigDecimal initialBalance;
+
+    public AccountHolderDTO(String name, String mail, String phone, LocalDate birthDate, String accountType, BigDecimal initialBalance) {
         this.name = name;
-        this.phone = phone;
         this.mail = mail;
+        this.phone = phone;
         this.birthDate = birthDate;
-        this.primaryAddress = primaryAddress;
+        this.accountType = accountType;
+        this.initialBalance = initialBalance;
     }
 
-    public AccountHolderDTO(String name, String phone, String mail, LocalDate birthDate, Address primaryAddress, Address mailingAddress) {
-        this.name = name;
-        this.phone = phone;
-        this.mail = mail;
-        this.birthDate = birthDate;
-        this.primaryAddress = primaryAddress;
-        this.mailingAddress = mailingAddress;
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
+    }
+
+    public BigDecimal getInitialBalance() {
+        return initialBalance;
+    }
+
+    public void setInitialBalance(BigDecimal initialBalance) {
+        this.initialBalance = initialBalance;
     }
 
     public String getMail() {
@@ -62,19 +72,5 @@ public class AccountHolderDTO {
         this.birthDate = birthDate;
     }
 
-    public Address getPrimaryAddress() {
-        return primaryAddress;
-    }
 
-    public void setPrimaryAddress(Address primaryAddress) {
-        this.primaryAddress = primaryAddress;
-    }
-
-    public Address getMailingAddress() {
-        return mailingAddress;
-    }
-
-    public void setMailingAddress(Address mailingAddress) {
-        this.mailingAddress = mailingAddress;
-    }
 }

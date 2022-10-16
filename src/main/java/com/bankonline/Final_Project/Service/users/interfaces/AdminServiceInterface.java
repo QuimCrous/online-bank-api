@@ -1,10 +1,16 @@
 package com.bankonline.Final_Project.Service.users.interfaces;
 
+import com.bankonline.Final_Project.DTOs.AccountHolderDTO;
 import com.bankonline.Final_Project.models.accounts.Account;
+import com.bankonline.Final_Project.models.users.User;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public interface AdminServiceInterface {
 
-    Account modifyBalance(Long accountId, BigDecimal amount);
+    Account modifyBalance(Long accountId, BigDecimal amount, String type);
+    Account changeStatusAccount(Long accountId, String status);
+    Account createNewAccount(AccountHolderDTO accountHolderDTO);
+    List<User> getAllUsers();
 }

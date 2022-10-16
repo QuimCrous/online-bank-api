@@ -35,6 +35,13 @@ public class AccountHolder extends User{
     public AccountHolder() {
     }
 
+    public AccountHolder(String name, String mail, String phone, LocalDate birthDate) {
+        super(name);
+        this.mail = mail;
+        this.phone = phone;
+        this.birthDate = birthDate;
+    }
+
     public AccountHolder(String name, String mail, String phone, LocalDate birthDate, Address primaryAddress) {
         super(name);
         this.mail = mail;
