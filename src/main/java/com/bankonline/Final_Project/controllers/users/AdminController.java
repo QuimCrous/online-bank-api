@@ -41,4 +41,17 @@ public class AdminController implements AdminControllerInterface {
     public List<User> getAllUsers(){
         return adminServiceInterface.getAllUsers();
     }
+
+    @DeleteMapping("/deleteaccount")
+    @ResponseStatus(HttpStatus.OK)
+    public String deleteAccount(@RequestBody Long id){
+        return adminServiceInterface.deleteAccount(id);
+    }
+
+    @PostMapping("/createnewaccountbyuser")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Account createNewAccountByUser(@RequestBody AccountHolderDTO accountHolderDTO){
+        return adminServiceInterface.createNewAccountByUser(accountHolderDTO);
+    }
+
 }

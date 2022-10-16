@@ -14,4 +14,6 @@ public interface AdminControllerInterface {
     Account changeStatusAccount(@RequestBody AccountStatusDTO accountStatusDTO);
     Account createNewUserAccount(@RequestBody AccountHolderDTO accountHolderDTO);
     List<User> getAllUsers();
+    String deleteAccount(@RequestBody Long id);
+    Account createNewAccountByUser(@RequestBody AccountHolderDTO accountHolderDTO);
 }

@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class AccountHolderDTO {
+    private Long id;
     private String name;
     private String mail;
     private String phone;
@@ -15,6 +16,12 @@ public class AccountHolderDTO {
     private String accountType;
     private BigDecimal initialBalance;
 
+    public AccountHolderDTO(Long id, String accountType, BigDecimal initialBalance) {
+        this.id = id;
+        this.accountType = accountType;
+        this.initialBalance = initialBalance;
+    }
+
     public AccountHolderDTO(String name, String mail, String phone, LocalDate birthDate, String accountType, BigDecimal initialBalance) {
         this.name = name;
         this.mail = mail;
@@ -22,6 +29,14 @@ public class AccountHolderDTO {
         this.birthDate = birthDate;
         this.accountType = accountType;
         this.initialBalance = initialBalance;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getAccountType() {

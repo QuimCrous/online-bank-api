@@ -1,5 +1,4 @@
 package com.bankonline.Final_Project.Service.users;
-
 import com.bankonline.Final_Project.DTOs.AccountHolderDTO;
 import com.bankonline.Final_Project.Service.users.interfaces.AdminServiceInterface;
 import com.bankonline.Final_Project.embedables.Money;
@@ -8,6 +7,7 @@ import com.bankonline.Final_Project.models.accounts.*;
 import com.bankonline.Final_Project.models.users.AccountHolder;
 import com.bankonline.Final_Project.models.users.User;
 import com.bankonline.Final_Project.repositories.accounts.AccountRepository;
+import com.bankonline.Final_Project.repositories.users.AccountHolderRepository;
 import com.bankonline.Final_Project.repositories.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +26,9 @@ public class AdminService implements AdminServiceInterface {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    AccountHolderRepository accountHolderRepository;
 
     public Account modifyBalance(Long accountId, BigDecimal amount, String type){
         Account account = accountRepository.findById(accountId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Incorrect Account id"));
@@ -57,7 +60,7 @@ public class AdminService implements AdminServiceInterface {
             case "savingsaccount":
                 SavingsAccount account = new SavingsAccount();
                 account.setPrimaryOwner(accountHolder);
-                if (initialBalance.getAmount().compareTo(account.getMinimumBalance().getAmount()) < 0) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Initial Balance must be over 1000USD");
+                if (initialBalance.getAmount().compareTo(account.getMinimumBalance().getAmount()) < 0) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Initial Balance must be over 1000EUR");
                 account.setBalance(initialBalance);
                 account.setCreationDate(LocalDate.now());
                 account.setStatus(Status.ACTIVE);
@@ -73,7 +76,7 @@ public class AdminService implements AdminServiceInterface {
                 if (LocalDate.now().compareTo(accountHolder.getBirthDate()) >= 24){
                     CheckingAccount account1 = new CheckingAccount();
                     account1.setPrimaryOwner(accountHolder);
-                    if (initialBalance.getAmount().compareTo(account1.getMinimumBalance().getAmount()) < 0) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Initial Balance must be over 250USD");
+                    if (initialBalance.getAmount().compareTo(account1.getMinimumBalance().getAmount()) < 0) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Initial Balance must be over 250EUR");
                     account1.setBalance(initialBalance);
                     account1.setCreationDate(LocalDate.now());
                     account1.setStatus(Status.ACTIVE);
@@ -95,5 +98,57 @@ public class AdminService implements AdminServiceInterface {
     public List<User> getAllUsers(){
         return userRepository.findAll();
     }
+
+    public String deleteAccount(Long id){
+        Account account = accountRepository.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Incorrect Account id"));
+        String response = "The account with "+ account.getId() + " id has been deleted.";
+        accountRepository.delete(account);
+        return response;
+    }
+
+    public Account createNewAccountByUser(AccountHolderDTO accountHolderDTO){
+        AccountHolder accountHolder = accountHolderRepository.findById(accountHolderDTO.getId()).get();
+        String accountType2 = accountHolderDTO.getAccountType().toLowerCase().replaceAll("\\W+", "");
+        Money initialBalance = new Money(accountHolderDTO.getInitialBalance());
+        switch (accountType2){
+            case "savingsaccount":
+                SavingsAccount account = new SavingsAccount();
+                account.setPrimaryOwner(accountHolder);
+                if (initialBalance.getAmount().compareTo(account.getMinimumBalance().getAmount()) < 0) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Initial Balance must be over 1000EUR");
+                account.setBalance(initialBalance);
+                account.setCreationDate(LocalDate.now());
+                account.setStatus(Status.ACTIVE);
+                return accountRepository.save(account);
+            case "creditcard":
+                CreditCard card = new CreditCard();
+                card.setPrimaryOwner(accountHolder);
+                card.setBalance(card.getCreditLimit());
+                card.setLastInterestDay(LocalDate.now());
+                card.setStatus(Status.ACTIVE);
+                return accountRepository.save(card);
+            case "checkingaccount":
+                if (LocalDate.now().compareTo(accountHolder.getBirthDate()) >= 24){
+                    CheckingAccount account1 = new CheckingAccount();
+                    account1.setPrimaryOwner(accountHolder);
+                    if (initialBalance.getAmount().compareTo(account1.getMinimumBalance().getAmount()) < 0) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Initial Balance must be over 250EUR");
+                    account1.setBalance(initialBalance);
+                    account1.setCreationDate(LocalDate.now());
+                    account1.setStatus(Status.ACTIVE);
+                    return accountRepository.save(account1);
+                } else {
+                    StudentCheckingAccount account1 = new StudentCheckingAccount();
+                    account1.setPrimaryOwner(accountHolder);
+                    account1.setCreationDate(LocalDate.now());
+                    account1.setBalance(initialBalance);
+                    account1.setStatus(Status.ACTIVE);
+                    return accountRepository.save(account1);
+                }
+            default:
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect Account Type");
+
+        }
+
+    }
+
 
 }

@@ -13,4 +13,6 @@ public interface AdminServiceInterface {
     Account changeStatusAccount(Long accountId, String status);
     Account createNewAccount(AccountHolderDTO accountHolderDTO);
     List<User> getAllUsers();
+    String deleteAccount(Long id);
+    Account createNewAccountByUser(AccountHolderDTO accountHolderDTO);
 }
