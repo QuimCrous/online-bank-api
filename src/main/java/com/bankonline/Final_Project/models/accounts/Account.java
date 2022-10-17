@@ -25,7 +25,7 @@ public abstract class Account {
 
     private LocalDate creationDate;
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private Status status = Status.ACTIVE;
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name="currency", column = @Column(name = "fee_currency")),
@@ -36,18 +36,11 @@ public abstract class Account {
     public Account() {
     }
 
-//    public Account(AccountHolder primaryOwner, LocalDate creationDate, Status status) {
-//        this.primaryOwner = primaryOwner;
-//        this.creationDate = creationDate;
-//        this.status = status;
-//    }
-
-    public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, LocalDate creationDate, Status status) {
+    public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, LocalDate creationDate) {
         this.balance = balance;
         this.primaryOwner = primaryOwner;
         this.secondaryOwner = secondaryOwner;
         this.creationDate = creationDate;
-        this.status = status;
     }
 
     public Long getId() {

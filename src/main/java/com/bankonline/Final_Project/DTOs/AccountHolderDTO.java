@@ -3,26 +3,33 @@ package com.bankonline.Final_Project.DTOs;
 
 
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class AccountHolderDTO {
-    private Long id;
-    private String name;
-    private String mail;
-    private String phone;
-    private LocalDate birthDate;
 
+    @NotEmpty
+    private String name;
+    @Email
+    private String mail;
+    @NotEmpty
+    private String phone;
+    @Past
+    private LocalDate birthDate;
+    @NotEmpty
     private String accountType;
+    @NotNull
     private BigDecimal initialBalance;
 
-    public AccountHolderDTO(Long id, String accountType, BigDecimal initialBalance) {
-        this.id = id;
-        this.accountType = accountType;
-        this.initialBalance = initialBalance;
-    }
 
-    public AccountHolderDTO(String name, String mail, String phone, LocalDate birthDate, String accountType, BigDecimal initialBalance) {
+
+    public AccountHolderDTO(String name, String mail, String phone, @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate birthDate, String accountType, BigDecimal initialBalance) {
         this.name = name;
         this.mail = mail;
         this.phone = phone;
@@ -31,13 +38,6 @@ public class AccountHolderDTO {
         this.initialBalance = initialBalance;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getAccountType() {
         return accountType;

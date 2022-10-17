@@ -1,6 +1,7 @@
 package com.bankonline.Final_Project.Service.users.interfaces;
 
 import com.bankonline.Final_Project.DTOs.AccountHolderDTO;
+import com.bankonline.Final_Project.DTOs.CreateAccountDTO;
 import com.bankonline.Final_Project.models.accounts.Account;
 import com.bankonline.Final_Project.models.users.User;
 
@@ -14,5 +15,7 @@ public interface AdminServiceInterface {
     Account createNewAccount(AccountHolderDTO accountHolderDTO);
     List<User> getAllUsers();
     String deleteAccount(Long id);
-    Account createNewAccountByUser(AccountHolderDTO accountHolderDTO);
+    Account createNewAccountByUser(CreateAccountDTO createAccountDTO);
+    String addSecondaryOwner(Long secondId, Long accountId);
+    List<Account> getAllAccounts();
 }

@@ -12,7 +12,7 @@ public class StudentCheckingAccount extends Account{
     public StudentCheckingAccount() {
     }
 
-    public StudentCheckingAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, LocalDate creationDate, Status status, Money penaltyFee) {
-        super(balance, primaryOwner, secondaryOwner, creationDate, status);
+    public StudentCheckingAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, LocalDate creationDate) {
+        super(balance, primaryOwner, secondaryOwner, creationDate);
     }
 }

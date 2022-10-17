@@ -6,6 +6,7 @@ import com.bankonline.Final_Project.models.users.AccountHolder;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.validation.constraints.Digits;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -14,19 +15,15 @@ public class SavingsAccount extends Account{
 
     @Embedded
     private Money minimumBalance = new Money(BigDecimal.valueOf(1000L));
-    private BigDecimal interestRate = new BigDecimal(0.0025);
+    @Digits(integer = 1,fraction = 4)
+    private BigDecimal interestRate = BigDecimal.valueOf(0.0025);
     private LocalDate lastInterestRate;
 
     public SavingsAccount() {
     }
 
-//    public SavingsAccount(AccountHolder primaryOwner, LocalDate creationDate, Status status, LocalDate lastInterestRate) {
-//        super(primaryOwner, creationDate, status);
-//        this.lastInterestRate = lastInterestRate;
-//    }
-
-    public SavingsAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, LocalDate creationDate, Status status, Money penaltyFee, Money minimumBalance, BigDecimal interestRate, LocalDate lastInterestRate) {
-        super(balance, primaryOwner, secondaryOwner, creationDate, status);
+    public SavingsAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, LocalDate creationDate, Money minimumBalance, BigDecimal interestRate, LocalDate lastInterestRate) {
+        super(balance, primaryOwner, secondaryOwner, creationDate);
         this.minimumBalance = minimumBalance;
         this.interestRate = interestRate;
         this.lastInterestRate = lastInterestRate;
@@ -54,5 +51,16 @@ public class SavingsAccount extends Account{
 
     public void setLastInterestRate(LocalDate lastInterestRate) {
         this.lastInterestRate = lastInterestRate;
+    }
+
+    public String checkInterestRate(String response){
+        if (LocalDate.now().isAfter(lastInterestRate.plusYears(1))){
+            BigDecimal bigDecimal = getBalance().getAmount().multiply(interestRate);
+            setBalance(new Money(getBalance().increaseAmount(bigDecimal)));
+            setLastInterestRate(LocalDate.now());
+            System.out.println(interestRate);
+            return response.concat("An annual interest rate has been applied.");
+        }
+        return response;
     }
 }

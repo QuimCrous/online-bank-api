@@ -13,14 +13,14 @@ import java.time.LocalDate;
 public class CheckingAccount extends Account{
     @Embedded
     private Money minimumBalance = new Money(BigDecimal.valueOf(250L));
-    private BigDecimal monthlyMaintenanceFee = new BigDecimal(0.01);
+    private BigDecimal monthlyMaintenanceFee = new BigDecimal(12);
     private LocalDate lastInterestDay;
 
     public CheckingAccount() {
     }
 
-    public CheckingAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, LocalDate creationDate, Status status, Money penaltyFee, Money minimumBalance, BigDecimal monthlyMaintenanceFee, LocalDate lastInterestDay) {
-        super(balance, primaryOwner, secondaryOwner, creationDate, status);
+    public CheckingAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, LocalDate creationDate, Money minimumBalance, BigDecimal monthlyMaintenanceFee, LocalDate lastInterestDay) {
+        super(balance, primaryOwner, secondaryOwner, creationDate);
         this.minimumBalance = minimumBalance;
         this.monthlyMaintenanceFee = monthlyMaintenanceFee;
         this.lastInterestDay = lastInterestDay;
@@ -48,5 +48,21 @@ public class CheckingAccount extends Account{
 
     public void setLastInterestDay(LocalDate lastInterestDay) {
         this.lastInterestDay = lastInterestDay;
+    }
+
+    public String checkMonthlyMaintenanceFee(String response){
+        int counter = 0;
+        while (LocalDate.now().compareTo(lastInterestDay.plusMonths(1)) >= 0){
+            setBalance(new Money(getBalance().decreaseAmount(monthlyMaintenanceFee)));
+            setLastInterestDay(lastInterestDay.plusMonths(1));
+            counter++;
+        }
+        setLastInterestDay(LocalDate.now());
+        if (counter == 0){
+            response = "";
+        } else {
+            response = response.concat("The monthly maintenance fee for the last "+counter+" months has been deducted from the balance.");
+        }
+        return response;
     }
 }
