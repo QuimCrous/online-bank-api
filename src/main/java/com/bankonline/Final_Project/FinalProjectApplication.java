@@ -41,31 +41,32 @@ public class FinalProjectApplication implements CommandLineRunner {
 		AccountHolder accountHolder4 = userRepository.save(new AccountHolder("Irina","mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("patata","patata","patata","patata","patata")));
 
 		SavingsAccount savingsAccount = new SavingsAccount();
-		savingsAccount.setBalance(new Money(BigDecimal.valueOf(1000)));
+		savingsAccount.setBalance(BigDecimal.valueOf(1000));
 		savingsAccount.setPrimaryOwner(accountHolder);
 		savingsAccount.setCreationDate(LocalDate.of(2021,01,01));
 		savingsAccount.setLastInterestRate(LocalDate.of(2021,01,01));
+		savingsAccount.setInterestRate(BigDecimal.valueOf(0.5000));
 		accountRepository.save(savingsAccount);
 		CheckingAccount checkingAccount = new CheckingAccount();
-		checkingAccount.setBalance(new Money(BigDecimal.valueOf(1000)));
+		checkingAccount.setBalance(BigDecimal.valueOf(1000));
 		checkingAccount.setPrimaryOwner(accountHolder1);
 		checkingAccount.setCreationDate(LocalDate.of(2020,01,01));
 		checkingAccount.setLastInterestDay(LocalDate.of(2020,01,01));
 		accountRepository.save(checkingAccount);
 		SavingsAccount savingsAccount2 = new SavingsAccount();
-		savingsAccount2.setBalance(new Money(BigDecimal.valueOf(1000)));
+		savingsAccount2.setBalance((BigDecimal.valueOf(1000)));
 		savingsAccount2.setPrimaryOwner(accountHolder2);
 		savingsAccount2.setCreationDate(LocalDate.now());
 		savingsAccount2.setLastInterestRate(LocalDate.now());
 		accountRepository.save(savingsAccount2);
 		CheckingAccount checkingAccount2 = new CheckingAccount();
-		checkingAccount2.setBalance(new Money(BigDecimal.valueOf(1000)));
+		checkingAccount2.setBalance((BigDecimal.valueOf(1000)));
 		checkingAccount2.setPrimaryOwner(accountHolder3);
 		checkingAccount2.setCreationDate(LocalDate.now());
 		checkingAccount2.setLastInterestDay(LocalDate.now());
 		accountRepository.save(checkingAccount2);
 		CheckingAccount checkingAccount3 = new CheckingAccount();
-		checkingAccount3.setBalance(new Money(BigDecimal.valueOf(1000)));
+		checkingAccount3.setBalance((BigDecimal.valueOf(1000)));
 		checkingAccount3.setPrimaryOwner(accountHolder4);
 		checkingAccount3.setCreationDate(LocalDate.now());
 		checkingAccount3.setLastInterestDay(LocalDate.now());
@@ -74,6 +75,8 @@ public class FinalProjectApplication implements CommandLineRunner {
 		creditCard.setPrimaryOwner(accountHolder4);
 		creditCard.setCreationDate(LocalDate.of(2020,01,01));
 		creditCard.setLastInterestDay(LocalDate.of(2020,01,01));
+		creditCard.setCreditLimit(BigDecimal.valueOf(500L));
+		creditCard.setInterestRate(BigDecimal.valueOf(0.15));
 		creditCard.setBalance(creditCard.getCreditLimit());
 		accountRepository.save(creditCard);
 	}

@@ -4,7 +4,6 @@ import com.bankonline.Final_Project.DTOs.AccountHolderDTO;
 import com.bankonline.Final_Project.DTOs.AddressDTO;
 import com.bankonline.Final_Project.Service.users.interfaces.AccountHolderServiceInterface;
 import com.bankonline.Final_Project.controllers.users.interfaces.AccountHolderControllerInterface;
-import com.bankonline.Final_Project.embedables.Address;
 import com.bankonline.Final_Project.models.accounts.Account;
 import com.bankonline.Final_Project.models.users.AccountHolder;
 import org.springframework.beans.factory.annotation.Autowired;

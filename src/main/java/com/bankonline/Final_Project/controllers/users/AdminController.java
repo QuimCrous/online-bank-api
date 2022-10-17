@@ -24,7 +24,6 @@ public class AdminController implements AdminControllerInterface {
     @PatchMapping("/admin/modify-balance")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Account modifyBalance(@RequestBody ModifyBalanceDTO modifyBalanceDTO){
-        System.out.println("hola");
         return adminServiceInterface.modifyBalance(modifyBalanceDTO.getAccountId(), modifyBalanceDTO.getAmount(), modifyBalanceDTO.getType());
     }
     @PatchMapping("/admin/status")

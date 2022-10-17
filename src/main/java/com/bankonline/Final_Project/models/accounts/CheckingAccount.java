@@ -1,7 +1,6 @@
 package com.bankonline.Final_Project.models.accounts;
 
 import com.bankonline.Final_Project.embedables.Money;
-import com.bankonline.Final_Project.enums.Status;
 import com.bankonline.Final_Project.models.users.AccountHolder;
 
 import javax.persistence.Embedded;
@@ -53,7 +52,7 @@ public class CheckingAccount extends Account{
     public String checkMonthlyMaintenanceFee(String response){
         int counter = 0;
         while (LocalDate.now().compareTo(lastInterestDay.plusMonths(1)) >= 0){
-            setBalance(new Money(getBalance().decreaseAmount(monthlyMaintenanceFee)));
+            setBalance((getBalance().decreaseAmount(monthlyMaintenanceFee)));
             setLastInterestDay(lastInterestDay.plusMonths(1));
             counter++;
         }
@@ -65,4 +64,5 @@ public class CheckingAccount extends Account{
         }
         return response;
     }
+
 }

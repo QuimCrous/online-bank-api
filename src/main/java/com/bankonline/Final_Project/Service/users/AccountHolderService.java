@@ -3,7 +3,6 @@ import com.bankonline.Final_Project.DTOs.AccountHolderDTO;
 import com.bankonline.Final_Project.DTOs.AddressDTO;
 import com.bankonline.Final_Project.Service.users.interfaces.AccountHolderServiceInterface;
 import com.bankonline.Final_Project.embedables.Address;
-import com.bankonline.Final_Project.embedables.Money;
 import com.bankonline.Final_Project.models.accounts.Account;
 import com.bankonline.Final_Project.models.accounts.CheckingAccount;
 import com.bankonline.Final_Project.models.accounts.CreditCard;
@@ -49,11 +48,11 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     public String transferSavingAccount(Long ownId, Long otherId, BigDecimal amount){
         SavingsAccount ownAccount = savingAccountRepository.findById(ownId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The owner account Id doesn't exist"));
         Account otherAccount = accountRepository.findById(otherId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The receptor account Id doesn't exist"));
-        ownAccount.setBalance(new Money(ownAccount.getBalance().decreaseAmount(amount)));
-        otherAccount.setBalance(new Money(otherAccount.getBalance().increaseAmount(amount)));
+        ownAccount.setBalance((ownAccount.getBalance().decreaseAmount(amount)));
+        otherAccount.setBalance((otherAccount.getBalance().increaseAmount(amount)));
         String response = ownAccount.getPrimaryOwner().getName() + " has transfer " + amount + " EUR to " + otherAccount.getPrimaryOwner().getName();
-        if (ownAccount.getBalance().getAmount().compareTo(ownAccount.getMinimumBalance().getAmount()) < 0){
-            ownAccount.setBalance(new Money(ownAccount.getBalance().decreaseAmount(ownAccount.getPenaltyFee())));
+        if (ownAccount.getBalance().getAmount().compareTo(ownAccount.getMinimumBalance()) < 0){
+            ownAccount.setBalance((ownAccount.getBalance().decreaseAmount(ownAccount.getPenaltyFee())));
             response = response.concat("\nA penalty fee has been applied.");
         }
         accountRepository.saveAll(List.of(ownAccount, otherAccount));
@@ -62,11 +61,11 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     public String transferCheckingAccount(Long ownId, Long otherId, BigDecimal amount){
         CheckingAccount ownAccount = checkingAccountRepository.findById(ownId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The owner account Id doesn't exist"));
         Account otherAccount = accountRepository.findById(otherId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The receptor account Id doesn't exist"));
-        ownAccount.setBalance(new Money(ownAccount.getBalance().decreaseAmount(amount)));
-        otherAccount.setBalance(new Money(otherAccount.getBalance().increaseAmount(amount)));
+        ownAccount.setBalance((ownAccount.getBalance().decreaseAmount(amount)));
+        otherAccount.setBalance((otherAccount.getBalance().increaseAmount(amount)));
         String response = ownAccount.getPrimaryOwner().getName() + " has transfer " + amount + " EUR to " + otherAccount.getPrimaryOwner().getName();
         if (ownAccount.getBalance().getAmount().compareTo(ownAccount.getMinimumBalance().getAmount()) < 0){
-            ownAccount.setBalance(new Money(ownAccount.getBalance().decreaseAmount(ownAccount.getPenaltyFee())));
+            ownAccount.setBalance((ownAccount.getBalance().decreaseAmount(ownAccount.getPenaltyFee())));
             response = response.concat("\nA penalty fee has been applied.");
         }
         accountRepository.saveAll(List.of(ownAccount, otherAccount));
@@ -76,15 +75,15 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     public String transferMoney(Long ownId, Long otherId, BigDecimal amount){
         Account ownAccount = accountRepository.findById(ownId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The owner account Id doesn't exist"));
         Account otherAccount = accountRepository.findById(otherId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The receptor account Id doesn't exist"));
-        ownAccount.setBalance(new Money(ownAccount.getBalance().decreaseAmount(amount)));
-        otherAccount.setBalance(new Money(otherAccount.getBalance().increaseAmount(amount)));
+        ownAccount.setBalance((ownAccount.getBalance().decreaseAmount(amount)));
+        otherAccount.setBalance((otherAccount.getBalance().increaseAmount(amount)));
         accountRepository.saveAll(List.of(ownAccount, otherAccount));
         return ownAccount.getPrimaryOwner().getName() + " has transfer " + amount + " EUR to " + otherAccount.getPrimaryOwner().getName();
     }
 
     public List<Account> getAccounts(Long accountHolderId){
         List<Account> accountList = accountRepository.findByPrimaryOwner(accountHolderRepository.findById(accountHolderId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The user doesn't exist.")));
-        accountList.addAll(accountRepository.findBySecondaryOwner(accountHolderRepository.findById(accountHolderId).get()));
+        accountList.addAll(accountRepository.findBySecondaryOwner(accountHolderRepository.findById(accountHolderId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The user doesn't exist."))));
         return accountList;
     }
 
@@ -104,7 +103,7 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     }
 
     public String getBalanceSavingAccount(Long id){
-        SavingsAccount account = savingAccountRepository.findById(id).get();
+        SavingsAccount account = savingAccountRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The account doesn't exist."));
         String response = "";
         response = account.checkInterestRate(response);
         savingAccountRepository.save(account);
@@ -112,7 +111,7 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     }
 
     public String getBalanceCheckingAccount(Long id){
-        CheckingAccount account = checkingAccountRepository.findById(id).get();
+        CheckingAccount account = checkingAccountRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The account doesn't exist."));
         String response = "";
         response = account.checkMonthlyMaintenanceFee(response);
         checkingAccountRepository.save(account);
@@ -121,21 +120,13 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     }
 
     public String getBalanceCreditCard(Long id){
-        CreditCard account = creditCardRepository.findById(id).get();
+        CreditCard account = creditCardRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The account doesn't exist."));
         String response = "";
         response = account.checkMonthlyInterestRate(response);
         System.out.println(response);
         creditCardRepository.save(account);
         return "The account with id: "+account.getId()+" has a balance of "+account.getBalance()+". " +response;
     }
-
-
-
-
-
-
-
-
 
     public AccountHolder createAccountHolder(AccountHolderDTO accountHolderDTO){
         AccountHolder accountHolder = new AccountHolder(accountHolderDTO.getName(),accountHolderDTO.getMail(),accountHolderDTO.getPhone(),accountHolderDTO.getBirthDate());

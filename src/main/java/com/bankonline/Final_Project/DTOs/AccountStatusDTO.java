@@ -1,5 +1,6 @@
 package com.bankonline.Final_Project.DTOs;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -7,6 +8,7 @@ public class AccountStatusDTO {
     @NotNull
     private Long id;
     @NotEmpty
+    @NotBlank
     private String status;
 
     public AccountStatusDTO(Long id, String status) {

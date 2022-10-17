@@ -19,4 +19,5 @@ public interface AdminControllerInterface {
     String deleteAccount(@RequestBody Long id);
     Account createNewAccountByUser(@RequestBody CreateAccountDTO createAccountDTO);
     String addSecondaryOwner(@RequestParam Long ownId, @RequestBody Long otherId);
+    List<Account> getAllAccounts();
 }

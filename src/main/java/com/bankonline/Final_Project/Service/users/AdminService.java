@@ -2,7 +2,6 @@ package com.bankonline.Final_Project.Service.users;
 import com.bankonline.Final_Project.DTOs.AccountHolderDTO;
 import com.bankonline.Final_Project.DTOs.CreateAccountDTO;
 import com.bankonline.Final_Project.Service.users.interfaces.AdminServiceInterface;
-import com.bankonline.Final_Project.embedables.Money;
 import com.bankonline.Final_Project.enums.Status;
 import com.bankonline.Final_Project.models.accounts.*;
 import com.bankonline.Final_Project.models.users.AccountHolder;
@@ -45,10 +44,10 @@ public class AdminService implements AdminServiceInterface {
         BigDecimal amount2;
         if (type.equals("increase")){
             amount2 = account.getBalance().increaseAmount(amount);
-            account.setBalance(new Money(amount2));
+            account.setBalance((amount2));
         } else if (type.equals("decrease")) {
             amount2 = account.getBalance().decreaseAmount(amount);
-            account.setBalance(new Money(amount2));
+            account.setBalance((amount2));
         }
         return accountRepository.save(account);
     }
@@ -82,62 +81,56 @@ public class AdminService implements AdminServiceInterface {
         AccountHolder accountHolder = new AccountHolder(accountHolderDTO.getName(),accountHolderDTO.getMail(),accountHolderDTO.getPhone(),accountHolderDTO.getBirthDate());
         userRepository.save(accountHolder);
         System.out.println(accountHolderDTO.getAccountType());
-        Money initialBalance = new Money(accountHolderDTO.getInitialBalance());
-        switch (accountHolderDTO.getAccountType()){
-            case "savingsaccount":
-                return createSavingAccount(initialBalance, accountHolder);
-            case "creditcard":
-                return createCreditCard(initialBalance, accountHolder);
-            case "checkingaccount":
-                return createCheckingAccount(initialBalance,accountHolder);
-            default:
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect Account Type holiwi de kiwi");
-
-        }
+        return switch (accountHolderDTO.getAccountType()) {
+            case "savingsaccount" ->
+                    createSavingAccount(accountHolderDTO.getInitialBalance(), accountHolder, accountHolderDTO.getMinimumBalance(), accountHolderDTO.getInterestRate());
+            case "creditcard" ->
+                    createCreditCard(accountHolder, accountHolderDTO.getMinimumBalance(), accountHolderDTO.getInterestRate());
+            case "checkingaccount" -> createCheckingAccount(accountHolderDTO.getInitialBalance(), accountHolder);
+            default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect Account Type");
+        };
 
     }
 
     public Account createNewAccountByUser(CreateAccountDTO createAccountDTO){
-        AccountHolder accountHolder = accountHolderRepository.findById(createAccountDTO.getId()).get();
-        Money initialBalance = new Money(createAccountDTO.getInitialBalance());
-        switch (createAccountDTO.getAccountType()){
-            case "savingsaccount":
-                return createSavingAccount(initialBalance, accountHolder);
-            case "creditcard":
-                return createCreditCard(initialBalance, accountHolder);
-            case "checkingaccount":
-                return createCheckingAccount(initialBalance, accountHolder);
-            default:
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect Account Type");
-
-        }
+        AccountHolder accountHolder = accountHolderRepository.findById(createAccountDTO.getId()).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"The id is incorrect."));
+        return switch (createAccountDTO.getAccountType()) {
+            case "savingsaccount" ->
+                    createSavingAccount(createAccountDTO.getInitialBalance(), accountHolder, createAccountDTO.getMinimumBalance(), createAccountDTO.getInterestRate());
+            case "creditcard" ->
+                    createCreditCard(accountHolder, createAccountDTO.getMinimumBalance(), createAccountDTO.getInterestRate());
+            case "checkingaccount" -> createCheckingAccount(createAccountDTO.getInitialBalance(), accountHolder);
+            default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect Account Type");
+        };
 
     }
 
 
-    public Account createSavingAccount(Money initialBalance, AccountHolder accountHolder){
+    public Account createSavingAccount(BigDecimal initialBalance, AccountHolder accountHolder, BigDecimal minimumBalance, BigDecimal interestRate){
         SavingsAccount account = new SavingsAccount();
         account.setPrimaryOwner(accountHolder);
-        if (initialBalance.getAmount().compareTo(account.getMinimumBalance().getAmount()) < 0) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Initial Balance must be over 1000EUR");
         account.setBalance(initialBalance);
+        account.setMinimumBalance(minimumBalance);
+        account.setInterestRate(interestRate);
         account.setCreationDate(LocalDate.now());
         account.setLastInterestRate(LocalDate.now());
         return savingAccountRepository.save(account);
     }
-    public Account createCreditCard(Money initialBalance, AccountHolder accountHolder){
+    public Account createCreditCard(AccountHolder accountHolder, BigDecimal minimumBalance, BigDecimal interestRate){
         CreditCard card = new CreditCard();
         card.setPrimaryOwner(accountHolder);
-        card.setBalance(card.getCreditLimit());
+        card.setCreditLimit(minimumBalance);
+        card.setBalance(minimumBalance);
+        card.setInterestRate(interestRate);
         card.setCreationDate(LocalDate.now());
         card.setLastInterestDay(LocalDate.now());
         return creditCardRepository.save(card);
     }
 
-    public Account createCheckingAccount(Money initialBalance, AccountHolder accountHolder){
+    public Account createCheckingAccount(BigDecimal initialBalance, AccountHolder accountHolder){
         if (LocalDate.now().minusYears(24).compareTo(accountHolder.getBirthDate()) >= 0){
             CheckingAccount account1 = new CheckingAccount();
             account1.setPrimaryOwner(accountHolder);
-            if (initialBalance.getAmount().compareTo(account1.getMinimumBalance().getAmount()) < 0) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Initial Balance must be over 250EUR");
             account1.setBalance(initialBalance);
             account1.setCreationDate(LocalDate.now());
             account1.setLastInterestDay(LocalDate.now());

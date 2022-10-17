@@ -55,8 +55,8 @@ public abstract class Account {
         return balance;
     }
 
-    public void setBalance(Money balance) {
-        this.balance = balance;
+    public void setBalance(BigDecimal balance) {
+        this.balance = new Money(balance);
     }
 
     public AccountHolder getSecondaryOwner() {

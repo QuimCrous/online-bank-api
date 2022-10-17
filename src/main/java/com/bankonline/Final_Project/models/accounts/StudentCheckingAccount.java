@@ -1,7 +1,6 @@
 package com.bankonline.Final_Project.models.accounts;
 
 import com.bankonline.Final_Project.embedables.Money;
-import com.bankonline.Final_Project.enums.Status;
 import com.bankonline.Final_Project.models.users.AccountHolder;
 
 import javax.persistence.Entity;

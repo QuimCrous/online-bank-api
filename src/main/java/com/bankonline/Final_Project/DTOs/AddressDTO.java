@@ -1,10 +1,23 @@
 package com.bankonline.Final_Project.DTOs;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+
 public class AddressDTO {
+    @NotEmpty
+    @NotBlank
     private String street;
+    @NotEmpty
+    @NotBlank
     private String city;
+    @NotEmpty
+    @NotBlank
     private String postalCode;
+    @NotEmpty
+    @NotBlank
     private String provinceState;
+    @NotEmpty
+    @NotBlank
     private String country;
 
     public AddressDTO(String street, String city, String postalCode, String provinceState, String country) {
