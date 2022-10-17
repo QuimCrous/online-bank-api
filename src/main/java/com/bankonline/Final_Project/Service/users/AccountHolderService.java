@@ -1,7 +1,10 @@
 package com.bankonline.Final_Project.Service.users;
+import com.bankonline.Final_Project.DTOs.AccountHolderDTO;
 import com.bankonline.Final_Project.Service.users.interfaces.AccountHolderServiceInterface;
+import com.bankonline.Final_Project.embedables.Address;
 import com.bankonline.Final_Project.embedables.Money;
 import com.bankonline.Final_Project.models.accounts.Account;
+import com.bankonline.Final_Project.models.users.AccountHolder;
 import com.bankonline.Final_Project.repositories.accounts.AccountRepository;
 import com.bankonline.Final_Project.repositories.users.AccountHolderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,35 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     }
 
     public List<Account> getAccounts(Long accountHolderId){
-        return accountRepository.findByPrimaryOwner(accountHolderRepository.findById(accountHolderId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The user doesn't exist.")));
+        List<Account> accountList = accountRepository.findByPrimaryOwner(accountHolderRepository.findById(accountHolderId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The user doesn't exist.")));
+        accountList.addAll(accountRepository.findBySecondaryOwner(accountHolderRepository.findById(accountHolderId).get()));
+        return accountList;
+    }
+
+    public AccountHolder createAccountHolder(AccountHolderDTO accountHolderDTO){
+        AccountHolder accountHolder = new AccountHolder(accountHolderDTO.getName(),accountHolderDTO.getMail(),accountHolderDTO.getPhone(),accountHolderDTO.getBirthDate());
+        return accountHolderRepository.save(accountHolder);
+    }
+
+    public String addPrimaryAddress(Long id, Address address){
+        AccountHolder accountHolder = accountHolderRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The id is incorrect."));
+        accountHolder.setPrimaryAddress(address);
+        accountHolderRepository.save(accountHolder);
+        return "The primary address has been updated";
+    }
+
+    public String addMailingAddress(Long id, Address address){
+        AccountHolder accountHolder = accountHolderRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The id is incorrect."));
+        accountHolder.setMailingAddress(address);
+        accountHolderRepository.save(accountHolder);
+        return "The mailing address has been updated";
+    }
+
+    public String addSecondaryOwner(Long secondId, Long accountId){
+        AccountHolder accountHolder2 = accountHolderRepository.findById(secondId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The id is incorrect."));
+        Account account = accountRepository.findById(accountId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The id is incorrect."));
+        account.setSecondaryOwner(accountHolder2);
+        accountRepository.save(account);
+        return "The secondary owner has been updated";
     }
 }

@@ -1,7 +1,6 @@
 package com.bankonline.Final_Project.controllers.users;
 
 import com.bankonline.Final_Project.DTOs.AccHolderTransferDTO;
-import com.bankonline.Final_Project.Service.accounts.interfaces.AccountServiceInterface;
 import com.bankonline.Final_Project.Service.users.interfaces.AccountHolderServiceInterface;
 import com.bankonline.Final_Project.controllers.users.interfaces.AccountHolderControllerInterface;
 import com.bankonline.Final_Project.models.accounts.Account;

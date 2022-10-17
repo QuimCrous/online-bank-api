@@ -11,4 +11,5 @@ import java.util.Optional;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
     List<Account> findByPrimaryOwner(AccountHolder primaryOwner);
+    List<Account> findBySecondaryOwner(AccountHolder secondaryOwner);
 }
