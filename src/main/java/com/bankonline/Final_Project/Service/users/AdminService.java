@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 
 @Service
@@ -128,7 +129,7 @@ public class AdminService implements AdminServiceInterface {
     }
 
     public Account createCheckingAccount(BigDecimal initialBalance, AccountHolder accountHolder){
-        if (LocalDate.now().minusYears(24).compareTo(accountHolder.getBirthDate()) >= 0){
+        if (Period.between(accountHolder.getBirthDate(), LocalDate.now()).getYears() >= 24){
             CheckingAccount account1 = new CheckingAccount();
             account1.setPrimaryOwner(accountHolder);
             account1.setBalance(initialBalance);

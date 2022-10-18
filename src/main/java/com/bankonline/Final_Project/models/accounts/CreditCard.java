@@ -8,6 +8,7 @@ import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.Period;
 
 @Entity
 public class CreditCard extends Account{
@@ -55,13 +56,11 @@ public class CreditCard extends Account{
     }
 
     public Money checkMonthlyInterestRate(){
-        int counter = 0;
         BigDecimal bigDecimal2 = interestRate.divide(BigDecimal.valueOf(12),4, RoundingMode.HALF_EVEN);
-        while (LocalDate.now().compareTo(lastInterestDay.plusMonths(1)) >= 0){
+        while (Period.between(getLastInterestDay().plusMonths(1), LocalDate.now()).getMonths() >= 0){
             BigDecimal bigDecimal = getBalance().getAmount().multiply(bigDecimal2);
             setBalance((getBalance().increaseAmount(bigDecimal)));
             setLastInterestDay(lastInterestDay.plusMonths(1));
-            counter++;
         }
         setLastInterestDay(LocalDate.now());
         return getBalance();

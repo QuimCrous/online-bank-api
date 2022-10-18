@@ -47,7 +47,7 @@ public class AccountHolderControllerTest {
     void getBalance_works_ok() throws Exception {
         String body = objectMapper.writeValueAsString(2L);
         MvcResult mvcResult = mockMvc.perform(get("/account-holder/get-balance").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
-        Assertions.assertEquals(BigDecimal.valueOf(60400,2),accountRepository.findById(2L).get().getBalance().getAmount());
+        Assertions.assertEquals(BigDecimal.valueOf(59200,2),accountRepository.findById(2L).get().getBalance().getAmount());
     }
 
     @Test

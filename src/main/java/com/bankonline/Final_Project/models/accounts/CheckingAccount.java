@@ -7,6 +7,8 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
 
 @Entity
 public class CheckingAccount extends Account{
@@ -50,11 +52,9 @@ public class CheckingAccount extends Account{
     }
 
     public Money checkMonthlyMaintenanceFee(){
-        int counter = 0;
-        while (LocalDate.now().compareTo(lastInterestDay.plusMonths(1)) >= 0){
+        while (Period.between(getLastInterestDay().plusMonths(1), LocalDate.now()).getMonths() >= 0){
             setBalance((getBalance().decreaseAmount(monthlyMaintenanceFee)));
             setLastInterestDay(lastInterestDay.plusMonths(1));
-            counter++;
         }
         setLastInterestDay(LocalDate.now());
         return getBalance();
