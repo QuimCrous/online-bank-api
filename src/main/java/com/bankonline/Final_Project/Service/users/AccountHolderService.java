@@ -4,15 +4,18 @@ import com.bankonline.Final_Project.DTOs.AddressDTO;
 import com.bankonline.Final_Project.Service.users.interfaces.AccountHolderServiceInterface;
 import com.bankonline.Final_Project.embedables.Address;
 import com.bankonline.Final_Project.embedables.Money;
+import com.bankonline.Final_Project.enums.Status;
 import com.bankonline.Final_Project.models.accounts.Account;
 import com.bankonline.Final_Project.models.accounts.CheckingAccount;
 import com.bankonline.Final_Project.models.accounts.CreditCard;
 import com.bankonline.Final_Project.models.accounts.SavingsAccount;
+import com.bankonline.Final_Project.models.transactions.Transaction;
 import com.bankonline.Final_Project.models.users.AccountHolder;
 import com.bankonline.Final_Project.repositories.accounts.AccountRepository;
 import com.bankonline.Final_Project.repositories.accounts.CheckingAccountRepository;
 import com.bankonline.Final_Project.repositories.accounts.CreditCardRepository;
 import com.bankonline.Final_Project.repositories.accounts.SavingAccountRepository;
+import com.bankonline.Final_Project.repositories.transactions.TransactionRepository;
 import com.bankonline.Final_Project.repositories.users.AccountHolderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -37,7 +42,11 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     @Autowired
     CreditCardRepository creditCardRepository;
 
+    @Autowired
+    TransactionRepository transactionRepository;
+
     public Money transferMoneyByAccountType(Long ownId, Long otherId, BigDecimal amount){
+        checkFraud(ownId);
         if (savingAccountRepository.findById(ownId).isPresent()){
             return transferSavingAccount(ownId, otherId, amount);
         } else if (checkingAccountRepository.findById(ownId).isPresent()) {
@@ -48,6 +57,7 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     }
     public Money transferSavingAccount(Long ownId, Long otherId, BigDecimal amount){
         SavingsAccount ownAccount = savingAccountRepository.findById(ownId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The owner account Id doesn't exist"));
+        if (ownAccount.getStatus().equals(Status.FROZEN)) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"lolroloroloooo");
         Account otherAccount = accountRepository.findById(otherId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The receptor account Id doesn't exist"));
         if (ownAccount.getBalance().getAmount().compareTo(amount) < 0) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"Not enough money to do the transfer");
         ownAccount.setBalance((ownAccount.getBalance().decreaseAmount(amount)));
@@ -55,11 +65,14 @@ public class AccountHolderService implements AccountHolderServiceInterface {
         if (ownAccount.getBalance().getAmount().compareTo(ownAccount.getMinimumBalance()) < 0){
             ownAccount.setBalance((ownAccount.getBalance().decreaseAmount(ownAccount.getPenaltyFee())));
         }
+        Transaction transaction = new Transaction(ownId,ownAccount,otherId,amount, LocalDateTime.now(),"savings");
+        transactionRepository.save(transaction);
         accountRepository.saveAll(List.of(ownAccount, otherAccount));
         return ownAccount.getBalance();
     }
     public Money transferCheckingAccount(Long ownId, Long otherId, BigDecimal amount){
         CheckingAccount ownAccount = checkingAccountRepository.findById(ownId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The owner account Id doesn't exist"));
+        if (ownAccount.getStatus().equals(Status.FROZEN)) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"lolroloroloooo");
         Account otherAccount = accountRepository.findById(otherId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The receptor account Id doesn't exist"));
         if (ownAccount.getBalance().getAmount().compareTo(amount) < 0) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"Not enough money to do the transfer");
         ownAccount.setBalance((ownAccount.getBalance().decreaseAmount(amount)));
@@ -67,16 +80,21 @@ public class AccountHolderService implements AccountHolderServiceInterface {
         if (ownAccount.getBalance().getAmount().compareTo(ownAccount.getMinimumBalance().getAmount()) < 0){
             ownAccount.setBalance((ownAccount.getBalance().decreaseAmount(ownAccount.getPenaltyFee())));
         }
+        Transaction transaction = new Transaction(ownId,ownAccount,otherId,amount, LocalDateTime.now(),"checking");
+        transactionRepository.save(transaction);
         accountRepository.saveAll(List.of(ownAccount, otherAccount));
         return ownAccount.getBalance();
     }
 
     public Money transferMoney(Long ownId, Long otherId, BigDecimal amount){
         Account ownAccount = accountRepository.findById(ownId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The owner account Id doesn't exist"));
+        if (ownAccount.getStatus().equals(Status.FROZEN)) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"lolroloroloooo");
         Account otherAccount = accountRepository.findById(otherId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The receptor account Id doesn't exist"));
         if (ownAccount.getBalance().getAmount().compareTo(amount) < 0) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"Not enough money to do the transfer");
         ownAccount.setBalance((ownAccount.getBalance().decreaseAmount(amount)));
         otherAccount.setBalance((otherAccount.getBalance().increaseAmount(amount)));
+        Transaction transaction = new Transaction(ownId,ownAccount,otherId,amount, LocalDateTime.now(),"transfer");
+        transactionRepository.save(transaction);
         accountRepository.saveAll(List.of(ownAccount, otherAccount));
         return ownAccount.getBalance();
     }
@@ -141,6 +159,18 @@ public class AccountHolderService implements AccountHolderServiceInterface {
         accountHolder.setMailingAddress(address);
         accountHolderRepository.save(accountHolder);
         return address;
+    }
+
+    public void checkFraud(Long ownId) {
+        if (transactionRepository.findByUserIdLast(ownId).isPresent()){
+            if (transactionRepository.findByUserIdLast(ownId).get().until(LocalDateTime.now(), ChronoUnit.MILLIS) < 1000) {
+                Account account = accountRepository.findById(ownId).get();
+                account.setStatus(Status.FROZEN);
+                accountRepository.save(account);
+                throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "Your account has been FROZEN due to fraud actions.");
+
+            }
+        }
     }
 
 

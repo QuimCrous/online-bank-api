@@ -79,5 +79,14 @@ public class FinalProjectApplication implements CommandLineRunner {
 		creditCard.setInterestRate(BigDecimal.valueOf(0.15));
 		creditCard.setBalance(creditCard.getCreditLimit());
 		accountRepository.save(creditCard);
+		CreditCard creditCard2 = new CreditCard();
+		creditCard2.setPrimaryOwner(accountHolder4);
+		creditCard2.setCreationDate(LocalDate.of(2020,01,01));
+		creditCard2.setLastInterestDay(LocalDate.of(2020,01,01));
+		creditCard2.setCreditLimit(BigDecimal.valueOf(500L));
+		creditCard2.setInterestRate(BigDecimal.valueOf(0.15));
+		creditCard2.setBalance(creditCard2.getCreditLimit());
+		creditCard2.setStatus(Status.FROZEN);
+		accountRepository.save(creditCard2);
 	}
 }

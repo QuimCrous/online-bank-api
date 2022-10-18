@@ -2,7 +2,9 @@ package com.bankonline.Final_Project.controllerstest;
 
 import com.bankonline.Final_Project.DTOs.AccHolderTransferDTO;
 import com.bankonline.Final_Project.DTOs.AddressDTO;
+import com.bankonline.Final_Project.Service.users.AccountHolderService;
 import com.bankonline.Final_Project.repositories.accounts.AccountRepository;
+import com.bankonline.Final_Project.repositories.transactions.TransactionRepository;
 import com.bankonline.Final_Project.repositories.users.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
@@ -18,6 +20,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,6 +33,11 @@ public class AccountHolderControllerTest {
 
     @Autowired
     AccountRepository accountRepository;
+
+    @Autowired
+    AccountHolderService accountHolderService;
+    @Autowired
+    TransactionRepository transactionRepository;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -61,7 +70,7 @@ public class AccountHolderControllerTest {
     @Test
     @DisplayName("Account Holder transferMoney works ok")
     void transferMoney_works_Ok() throws Exception {
-        AccHolderTransferDTO accHolderTransferDTO = new AccHolderTransferDTO(3L,2L,BigDecimal.valueOf(10L));
+        AccHolderTransferDTO accHolderTransferDTO = new AccHolderTransferDTO(3L,4L,BigDecimal.valueOf(10L));
         String body = objectMapper.writeValueAsString(accHolderTransferDTO);
         MvcResult mvcResult = mockMvc.perform(put("/account-holder/transfer").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
         Assertions.assertEquals("{\"currency\":\"EUR\",\"amount\":950.00}",mvcResult.getResponse().getContentAsString());
@@ -69,7 +78,7 @@ public class AccountHolderControllerTest {
     @Test
     @DisplayName("Account Holder transferMoney throws exception")
     void transferMoney_throws_Not_Acceptable() throws Exception {
-        AccHolderTransferDTO accHolderTransferDTO = new AccHolderTransferDTO(3L,2L,BigDecimal.valueOf(2000L));
+        AccHolderTransferDTO accHolderTransferDTO = new AccHolderTransferDTO(1L,2L,BigDecimal.valueOf(2000L));
         String body = objectMapper.writeValueAsString(accHolderTransferDTO);
         MvcResult mvcResult = mockMvc.perform(put("/account-holder/transfer").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotAcceptable()).andReturn();
         Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("Not enough money"));
@@ -103,5 +112,26 @@ public class AccountHolderControllerTest {
         String body = objectMapper.writeValueAsString(addressDTO);
         MvcResult mvcResult = mockMvc.perform(put("/account-holder/add-mailing-address").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
         Assertions.assertTrue(mvcResult.getResponse().getContentAsString().contains("IBIZAAAAA"));
+    }
+
+    @Test
+    @DisplayName("Account Holder transferMoney throws exception and Frozen account block due to fraud")
+    void transferMoney_froze_account_works() throws Exception {
+        AccHolderTransferDTO accHolderTransferDTO = new AccHolderTransferDTO(6L,4L,BigDecimal.valueOf(10L));
+        String body = objectMapper.writeValueAsString(accHolderTransferDTO);
+        MvcResult mvcResult = mockMvc.perform(put("/account-holder/transfer").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
+        AccHolderTransferDTO accHolderTransferDTO2 = new AccHolderTransferDTO(6L,4L,BigDecimal.valueOf(10L));
+        String body2 = objectMapper.writeValueAsString(accHolderTransferDTO);
+        MvcResult mvcResult2 = mockMvc.perform(put("/account-holder/transfer").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isIAmATeapot()).andReturn();
+        Assertions.assertTrue(mvcResult2.getResolvedException().toString().contains("Your account has been FROZEN due to fraud actions"));
+
+    }
+
+    @Test
+    @DisplayName("transferMoney throws exception when detects a frozen account")
+    void transferMoney_frozen_throws_exception() throws Exception {
+        AccHolderTransferDTO accHolderTransferDTO = new AccHolderTransferDTO(7L,7L,BigDecimal.valueOf(10L));
+        String body = objectMapper.writeValueAsString(accHolderTransferDTO);
+        MvcResult mvcResult = mockMvc.perform(put("/account-holder/transfer").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotAcceptable()).andReturn();
     }
 }
