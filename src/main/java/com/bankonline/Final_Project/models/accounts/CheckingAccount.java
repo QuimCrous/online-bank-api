@@ -49,7 +49,7 @@ public class CheckingAccount extends Account{
         this.lastInterestDay = lastInterestDay;
     }
 
-    public String checkMonthlyMaintenanceFee(String response){
+    public Money checkMonthlyMaintenanceFee(){
         int counter = 0;
         while (LocalDate.now().compareTo(lastInterestDay.plusMonths(1)) >= 0){
             setBalance((getBalance().decreaseAmount(monthlyMaintenanceFee)));
@@ -57,12 +57,7 @@ public class CheckingAccount extends Account{
             counter++;
         }
         setLastInterestDay(LocalDate.now());
-        if (counter == 0){
-            response = "";
-        } else {
-            response = response.concat("The monthly maintenance fee for the last "+counter+" months has been deducted from the balance.");
-        }
-        return response;
+        return getBalance();
     }
 
 }

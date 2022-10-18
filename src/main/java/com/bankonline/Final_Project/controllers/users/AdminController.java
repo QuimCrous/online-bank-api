@@ -1,9 +1,6 @@
 package com.bankonline.Final_Project.controllers.users;
 
-import com.bankonline.Final_Project.DTOs.AccountHolderDTO;
-import com.bankonline.Final_Project.DTOs.AccountStatusDTO;
-import com.bankonline.Final_Project.DTOs.CreateAccountDTO;
-import com.bankonline.Final_Project.DTOs.ModifyBalanceDTO;
+import com.bankonline.Final_Project.DTOs.*;
 import com.bankonline.Final_Project.Service.users.interfaces.AdminServiceInterface;
 import com.bankonline.Final_Project.controllers.users.interfaces.AdminControllerInterface;
 import com.bankonline.Final_Project.models.accounts.Account;
@@ -54,10 +51,10 @@ public class AdminController implements AdminControllerInterface {
     public Account createNewAccountByUser(@RequestBody CreateAccountDTO createAccountDTO){
         return adminServiceInterface.createNewAccountByUser(createAccountDTO);
     }
-    @PutMapping("/account-holder/add-second-owner")
+    @PutMapping("/admin/add-second-owner")
     @ResponseStatus(HttpStatus.OK)
-    public String addSecondaryOwner(@RequestParam Long ownId, @RequestBody Long otherId){
-        return adminServiceInterface.addSecondaryOwner(ownId,otherId);
+    public String addSecondaryOwner(@RequestBody AddSecondOwnerDTO addSecondOwnerDTO){
+        return adminServiceInterface.addSecondaryOwner(addSecondOwnerDTO.getAccountHolderId(), addSecondOwnerDTO.getAccountId());
     }
     @GetMapping("/admin/get-all-accounts")
     public List<Account> getAllAccounts(){

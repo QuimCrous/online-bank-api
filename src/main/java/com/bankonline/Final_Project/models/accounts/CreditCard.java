@@ -54,7 +54,7 @@ public class CreditCard extends Account{
         this.lastInterestDay = lastInterestDay;
     }
 
-    public String checkMonthlyInterestRate(String response){
+    public Money checkMonthlyInterestRate(){
         int counter = 0;
         BigDecimal bigDecimal2 = interestRate.divide(BigDecimal.valueOf(12),4, RoundingMode.HALF_EVEN);
         while (LocalDate.now().compareTo(lastInterestDay.plusMonths(1)) >= 0){
@@ -64,12 +64,7 @@ public class CreditCard extends Account{
             counter++;
         }
         setLastInterestDay(LocalDate.now());
-        if (counter==0){
-            response = "";
-        } else {
-            response = response.concat("The interest rate for the last "+counter+" months has been added to the balance.");
-        }
-        return response;
+        return getBalance();
     }
 
 

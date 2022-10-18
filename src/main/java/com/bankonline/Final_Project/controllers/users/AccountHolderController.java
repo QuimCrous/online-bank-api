@@ -4,6 +4,8 @@ import com.bankonline.Final_Project.DTOs.AccountHolderDTO;
 import com.bankonline.Final_Project.DTOs.AddressDTO;
 import com.bankonline.Final_Project.Service.users.interfaces.AccountHolderServiceInterface;
 import com.bankonline.Final_Project.controllers.users.interfaces.AccountHolderControllerInterface;
+import com.bankonline.Final_Project.embedables.Address;
+import com.bankonline.Final_Project.embedables.Money;
 import com.bankonline.Final_Project.models.accounts.Account;
 import com.bankonline.Final_Project.models.users.AccountHolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,7 @@ public class AccountHolderController implements AccountHolderControllerInterface
     AccountHolderServiceInterface accountHolderServiceInterface;
     @PutMapping("/account-holder/transfer")
     @ResponseStatus(HttpStatus.OK)
-    public String transferMoney(@RequestBody AccHolderTransferDTO accHolderTransferDTO){
+    public Money transferMoney(@RequestBody AccHolderTransferDTO accHolderTransferDTO){
         return accountHolderServiceInterface.transferMoneyByAccountType(accHolderTransferDTO.getOwnId(), accHolderTransferDTO.getOtherId(), accHolderTransferDTO.getAmount());
     }
     @GetMapping("/account-holder")
@@ -36,19 +38,19 @@ public class AccountHolderController implements AccountHolderControllerInterface
 
     @PutMapping("/account-holder/add-primary-address")
     @ResponseStatus(HttpStatus.OK)
-    public String addPrimaryAddress(@RequestParam Long id, @RequestBody AddressDTO addressDTO){
-        return accountHolderServiceInterface.addPrimaryAddress(id,addressDTO);
+    public Address addPrimaryAddress(@RequestBody AddressDTO addressDTO){
+        return accountHolderServiceInterface.addPrimaryAddress(addressDTO.getId(), addressDTO);
     }
 
     @PutMapping("/account-holder/add-mailing-address")
     @ResponseStatus(HttpStatus.OK)
-    public String addMailingAddress(@RequestParam Long id, @RequestBody AddressDTO addressDTO){
-        return accountHolderServiceInterface.addMailingAddress(id,addressDTO);
+    public Address addMailingAddress(@RequestBody AddressDTO addressDTO){
+        return accountHolderServiceInterface.addMailingAddress(addressDTO.getId(), addressDTO);
     }
 
 
     @GetMapping("/account-holder/get-balance")
-    public String getBalance(@RequestBody Long accountId){
-        return accountHolderServiceInterface.getBalance(accountId);
+    public Money getBalance(@RequestBody Long id){
+        return accountHolderServiceInterface.getBalance(id);
     }
 }

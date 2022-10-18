@@ -1,9 +1,6 @@
 package com.bankonline.Final_Project.controllers.users.interfaces;
 
-import com.bankonline.Final_Project.DTOs.AccountHolderDTO;
-import com.bankonline.Final_Project.DTOs.AccountStatusDTO;
-import com.bankonline.Final_Project.DTOs.CreateAccountDTO;
-import com.bankonline.Final_Project.DTOs.ModifyBalanceDTO;
+import com.bankonline.Final_Project.DTOs.*;
 import com.bankonline.Final_Project.models.accounts.Account;
 import com.bankonline.Final_Project.models.users.User;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +15,6 @@ public interface AdminControllerInterface {
     List<User> getAllUsers();
     String deleteAccount(@RequestBody Long id);
     Account createNewAccountByUser(@RequestBody CreateAccountDTO createAccountDTO);
-    String addSecondaryOwner(@RequestParam Long ownId, @RequestBody Long otherId);
+    String addSecondaryOwner(@RequestBody AddSecondOwnerDTO addSecondOwnerDTO);
     List<Account> getAllAccounts();
 }

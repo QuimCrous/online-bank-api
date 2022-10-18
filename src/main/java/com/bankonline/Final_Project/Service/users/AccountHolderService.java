@@ -3,6 +3,7 @@ import com.bankonline.Final_Project.DTOs.AccountHolderDTO;
 import com.bankonline.Final_Project.DTOs.AddressDTO;
 import com.bankonline.Final_Project.Service.users.interfaces.AccountHolderServiceInterface;
 import com.bankonline.Final_Project.embedables.Address;
+import com.bankonline.Final_Project.embedables.Money;
 import com.bankonline.Final_Project.models.accounts.Account;
 import com.bankonline.Final_Project.models.accounts.CheckingAccount;
 import com.bankonline.Final_Project.models.accounts.CreditCard;
@@ -36,53 +37,48 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     @Autowired
     CreditCardRepository creditCardRepository;
 
-    public String transferMoneyByAccountType(Long ownId, Long otherId, BigDecimal amount){
-
+    public Money transferMoneyByAccountType(Long ownId, Long otherId, BigDecimal amount){
         if (savingAccountRepository.findById(ownId).isPresent()){
-
             return transferSavingAccount(ownId, otherId, amount);
         } else if (checkingAccountRepository.findById(ownId).isPresent()) {
-
             return transferCheckingAccount(ownId, otherId, amount);
         }else {
-
             return transferMoney(ownId, otherId,amount);
         }
     }
-    public String transferSavingAccount(Long ownId, Long otherId, BigDecimal amount){
+    public Money transferSavingAccount(Long ownId, Long otherId, BigDecimal amount){
         SavingsAccount ownAccount = savingAccountRepository.findById(ownId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The owner account Id doesn't exist"));
         Account otherAccount = accountRepository.findById(otherId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The receptor account Id doesn't exist"));
+        if (ownAccount.getBalance().getAmount().compareTo(amount) < 0) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"Not enough money to do the transfer");
         ownAccount.setBalance((ownAccount.getBalance().decreaseAmount(amount)));
         otherAccount.setBalance((otherAccount.getBalance().increaseAmount(amount)));
-        String response = ownAccount.getPrimaryOwner().getName() + " has transfer " + amount + " EUR to " + otherAccount.getPrimaryOwner().getName();
         if (ownAccount.getBalance().getAmount().compareTo(ownAccount.getMinimumBalance()) < 0){
             ownAccount.setBalance((ownAccount.getBalance().decreaseAmount(ownAccount.getPenaltyFee())));
-            response = response.concat("\nA penalty fee has been applied.");
         }
         accountRepository.saveAll(List.of(ownAccount, otherAccount));
-        return response;
+        return ownAccount.getBalance();
     }
-    public String transferCheckingAccount(Long ownId, Long otherId, BigDecimal amount){
+    public Money transferCheckingAccount(Long ownId, Long otherId, BigDecimal amount){
         CheckingAccount ownAccount = checkingAccountRepository.findById(ownId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The owner account Id doesn't exist"));
         Account otherAccount = accountRepository.findById(otherId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The receptor account Id doesn't exist"));
+        if (ownAccount.getBalance().getAmount().compareTo(amount) < 0) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"Not enough money to do the transfer");
         ownAccount.setBalance((ownAccount.getBalance().decreaseAmount(amount)));
         otherAccount.setBalance((otherAccount.getBalance().increaseAmount(amount)));
-        String response = ownAccount.getPrimaryOwner().getName() + " has transfer " + amount + " EUR to " + otherAccount.getPrimaryOwner().getName();
         if (ownAccount.getBalance().getAmount().compareTo(ownAccount.getMinimumBalance().getAmount()) < 0){
             ownAccount.setBalance((ownAccount.getBalance().decreaseAmount(ownAccount.getPenaltyFee())));
-            response = response.concat("\nA penalty fee has been applied.");
         }
         accountRepository.saveAll(List.of(ownAccount, otherAccount));
-        return response;
+        return ownAccount.getBalance();
     }
 
-    public String transferMoney(Long ownId, Long otherId, BigDecimal amount){
+    public Money transferMoney(Long ownId, Long otherId, BigDecimal amount){
         Account ownAccount = accountRepository.findById(ownId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The owner account Id doesn't exist"));
         Account otherAccount = accountRepository.findById(otherId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The receptor account Id doesn't exist"));
+        if (ownAccount.getBalance().getAmount().compareTo(amount) < 0) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"Not enough money to do the transfer");
         ownAccount.setBalance((ownAccount.getBalance().decreaseAmount(amount)));
         otherAccount.setBalance((otherAccount.getBalance().increaseAmount(amount)));
         accountRepository.saveAll(List.of(ownAccount, otherAccount));
-        return ownAccount.getPrimaryOwner().getName() + " has transfer " + amount + " EUR to " + otherAccount.getPrimaryOwner().getName();
+        return ownAccount.getBalance();
     }
 
     public List<Account> getAccounts(Long accountHolderId){
@@ -91,45 +87,39 @@ public class AccountHolderService implements AccountHolderServiceInterface {
         return accountList;
     }
 
-    public String getBalance(Long id){
-        String response;
+    public Money getBalance(Long id){
         if (savingAccountRepository.existsById(id)){
-            response = getBalanceSavingAccount(id);
+            return getBalanceSavingAccount(id);
         } else if (checkingAccountRepository.existsById(id)) {
-            response = getBalanceCheckingAccount(id);
+            return getBalanceCheckingAccount(id);
         } else if (creditCardRepository.existsById(id)) {
-            response = getBalanceCreditCard(id);
+            return getBalanceCreditCard(id);
         } else {
             Account account = accountRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The user doesn't exist."));
-            response =  "The account with id: "+account.getId()+" has a balance of "+account.getBalance();
+            return account.getBalance();
         }
-        return response;
+
     }
 
-    public String getBalanceSavingAccount(Long id){
+    public Money getBalanceSavingAccount(Long id){
         SavingsAccount account = savingAccountRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The account doesn't exist."));
-        String response = "";
-        response = account.checkInterestRate(response);
+        account.checkInterestRate();
         savingAccountRepository.save(account);
-        return "The account with id: "+account.getId()+" has a balance of "+account.getBalance() + ". "+response;
+        return account.getBalance();
     }
 
-    public String getBalanceCheckingAccount(Long id){
+    public Money getBalanceCheckingAccount(Long id){
         CheckingAccount account = checkingAccountRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The account doesn't exist."));
-        String response = "";
-        response = account.checkMonthlyMaintenanceFee(response);
+        account.checkMonthlyMaintenanceFee();
         checkingAccountRepository.save(account);
-
-        return "The account with id: "+account.getId()+" has a balance of "+account.getBalance()+". "+response;
+        return account.getBalance();
     }
 
-    public String getBalanceCreditCard(Long id){
+    public Money getBalanceCreditCard(Long id){
         CreditCard account = creditCardRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The account doesn't exist."));
-        String response = "";
-        response = account.checkMonthlyInterestRate(response);
-        System.out.println(response);
+        account.checkMonthlyInterestRate();
         creditCardRepository.save(account);
-        return "The account with id: "+account.getId()+" has a balance of "+account.getBalance()+". " +response;
+        return account.getBalance();
     }
 
     public AccountHolder createAccountHolder(AccountHolderDTO accountHolderDTO){
@@ -137,18 +127,20 @@ public class AccountHolderService implements AccountHolderServiceInterface {
         return accountHolderRepository.save(accountHolder);
     }
 
-    public String addPrimaryAddress(Long id, AddressDTO addressDTO){
+    public Address addPrimaryAddress(Long id, AddressDTO addressDTO){
         AccountHolder accountHolder = accountHolderRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The id is incorrect."));
-        accountHolder.setPrimaryAddress(new Address(addressDTO.getStreet(),addressDTO.getCity(),addressDTO.getPostalCode(),addressDTO.getProvinceState(),addressDTO.getCountry()));
+        Address address = new Address(addressDTO.getStreet(),addressDTO.getCity(),addressDTO.getPostalCode(),addressDTO.getProvinceState(),addressDTO.getCountry());
+        accountHolder.setPrimaryAddress(address);
         accountHolderRepository.save(accountHolder);
-        return "The primary address has been updated";
+        return address;
     }
 
-    public String addMailingAddress(Long id, AddressDTO addressDTO){
+    public Address addMailingAddress(Long id, AddressDTO addressDTO){
         AccountHolder accountHolder = accountHolderRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The id is incorrect."));
-        accountHolder.setMailingAddress(new Address(addressDTO.getStreet(),addressDTO.getCity(),addressDTO.getPostalCode(),addressDTO.getProvinceState(),addressDTO.getCountry()));
+        Address address = new Address(addressDTO.getStreet(),addressDTO.getCity(),addressDTO.getPostalCode(),addressDTO.getProvinceState(),addressDTO.getCountry());
+        accountHolder.setMailingAddress(address);
         accountHolderRepository.save(accountHolder);
-        return "The mailing address has been updated";
+        return address;
     }
 
 

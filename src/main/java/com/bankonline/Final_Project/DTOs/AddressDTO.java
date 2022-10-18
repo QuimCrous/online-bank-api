@@ -2,8 +2,11 @@ package com.bankonline.Final_Project.DTOs;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 public class AddressDTO {
+    @NotNull
+    private Long id;
     @NotEmpty
     @NotBlank
     private String street;
@@ -20,7 +23,8 @@ public class AddressDTO {
     @NotBlank
     private String country;
 
-    public AddressDTO(String street, String city, String postalCode, String provinceState, String country) {
+    public AddressDTO(Long id, String street, String city, String postalCode, String provinceState, String country) {
+        this.id = id;
         this.street = street;
         this.city = city;
         this.postalCode = postalCode;
@@ -66,5 +70,13 @@ public class AddressDTO {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

@@ -34,11 +34,11 @@ public class FinalProjectApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		userRepository.save(new Admin("Jaume"));
-		AccountHolder accountHolder = userRepository.save(new AccountHolder("Quim","mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("patata","patata","patata","patata","patata")));
-		AccountHolder accountHolder1 = userRepository.save(new AccountHolder("Oscar","mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("patata","patata","patata","patata","patata")));
-		AccountHolder accountHolder2 = userRepository.save(new AccountHolder("Aña","mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("patata","patata","patata","patata","patata")));
-		AccountHolder accountHolder3 = userRepository.save(new AccountHolder("Danny","mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("patata","patata","patata","patata","patata")));
-		AccountHolder accountHolder4 = userRepository.save(new AccountHolder("Irina","mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("patata","patata","patata","patata","patata")));
+		AccountHolder accountHolder = userRepository.save(new AccountHolder("Quim","mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street one, 1","city1","10010","province1","country1")));
+		AccountHolder accountHolder1 = userRepository.save(new AccountHolder("Oscar","mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street two, 2","city2","99999","province2","country2")));
+		AccountHolder accountHolder2 = userRepository.save(new AccountHolder("Aña","mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street three, 3","city3","AP002","province3","country3")));
+		AccountHolder accountHolder3 = userRepository.save(new AccountHolder("Danny","mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street four, 4","city4","08080","province4","country4")));
+		AccountHolder accountHolder4 = userRepository.save(new AccountHolder("Irina","mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street five,5","city5","77898","province5","country5")));
 
 		SavingsAccount savingsAccount = new SavingsAccount();
 		savingsAccount.setBalance(BigDecimal.valueOf(1000));

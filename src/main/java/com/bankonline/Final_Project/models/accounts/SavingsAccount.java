@@ -55,14 +55,13 @@ public class SavingsAccount extends Account{
         this.lastInterestRate = lastInterestRate;
     }
 
-    public String checkInterestRate(String response){
+    public Money checkInterestRate(){
         if (LocalDate.now().isAfter(lastInterestRate.plusYears(1))){
             BigDecimal bigDecimal = getBalance().getAmount().multiply(interestRate);
             setBalance((getBalance().increaseAmount(bigDecimal)));
             setLastInterestRate(LocalDate.now());
-            System.out.println(interestRate);
-            return response.concat("An annual interest rate has been applied.");
+            return getBalance();
         }
-        return response;
+        return getBalance();
     }
 }
