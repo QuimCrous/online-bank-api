@@ -35,10 +35,5 @@ class FinalProjectApplicationTests {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
 
-	@Test
-	void checkMonthlyMaintenanceFee_works_OK() {
-		LocalDateTime.now();
-
-	}
 
 }
