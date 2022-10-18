@@ -22,12 +22,12 @@ public class AdminController implements AdminControllerInterface {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Account modifyBalance(@RequestBody ModifyBalanceDTO modifyBalanceDTO){
         return adminServiceInterface.modifyBalance(modifyBalanceDTO.getAccountId(), modifyBalanceDTO.getAmount(), modifyBalanceDTO.getType());
-    }
+    }/*test done*/
     @PatchMapping("/admin/status")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Account changeStatusAccount(@RequestBody AccountStatusDTO accountStatusDTO){
         return adminServiceInterface.changeStatusAccount(accountStatusDTO.getId(), accountStatusDTO.getStatus());
-    }
+    }/*test done*/
     @PostMapping("/admin/create-new-user-account")
     @ResponseStatus(HttpStatus.CREATED)
     public Account createNewUserAccount(@RequestBody AccountHolderDTO accountHolderDTO){
@@ -38,27 +38,27 @@ public class AdminController implements AdminControllerInterface {
     @ResponseStatus(HttpStatus.OK)
     public List<User> getAllUsers(){
         return adminServiceInterface.getAllUsers();
-    }
+    }/*test done*/
 
     @DeleteMapping("/admin/delete-account")
     @ResponseStatus(HttpStatus.OK)
     public String deleteAccount(@RequestBody Long id){
         return adminServiceInterface.deleteAccount(id);
-    }
+    }/*test done*/
 
     @PostMapping("/admin/create-new-account-by-user")
     @ResponseStatus(HttpStatus.CREATED)
     public Account createNewAccountByUser(@RequestBody CreateAccountDTO createAccountDTO){
         return adminServiceInterface.createNewAccountByUser(createAccountDTO);
-    }
+    }/*test done*/
     @PutMapping("/admin/add-second-owner")
     @ResponseStatus(HttpStatus.OK)
     public String addSecondaryOwner(@RequestBody AddSecondOwnerDTO addSecondOwnerDTO){
         return adminServiceInterface.addSecondaryOwner(addSecondOwnerDTO.getAccountHolderId(), addSecondOwnerDTO.getAccountId());
-    }
+    }/*test done*/
     @GetMapping("/admin/get-all-accounts")
     public List<Account> getAllAccounts(){
         return adminServiceInterface.getAllAccounts();
-    }
+    }/*test done*/
 
 }

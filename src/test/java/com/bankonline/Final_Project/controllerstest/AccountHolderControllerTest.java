@@ -1,10 +1,7 @@
 package com.bankonline.Final_Project.controllerstest;
 
 import com.bankonline.Final_Project.DTOs.AccHolderTransferDTO;
-import com.bankonline.Final_Project.DTOs.AccountStatusDTO;
 import com.bankonline.Final_Project.DTOs.AddressDTO;
-import com.bankonline.Final_Project.DTOs.GetBalanceDTO;
-import com.bankonline.Final_Project.embedables.Money;
 import com.bankonline.Final_Project.repositories.accounts.AccountRepository;
 import com.bankonline.Final_Project.repositories.users.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,6 +51,14 @@ public class AccountHolderControllerTest {
     }
 
     @Test
+    @DisplayName("Account Holder getBalance works ok")
+    void getBalance_throws_Not_Found() throws Exception {
+        String body = objectMapper.writeValueAsString(90L);
+        MvcResult mvcResult = mockMvc.perform(get("/account-holder/get-balance").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound()).andReturn();
+        Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("account"));
+    }
+
+    @Test
     @DisplayName("Account Holder transferMoney works ok")
     void transferMoney_works_Ok() throws Exception {
         AccHolderTransferDTO accHolderTransferDTO = new AccHolderTransferDTO(3L,2L,BigDecimal.valueOf(10L));
@@ -67,14 +72,28 @@ public class AccountHolderControllerTest {
         AccHolderTransferDTO accHolderTransferDTO = new AccHolderTransferDTO(3L,2L,BigDecimal.valueOf(2000L));
         String body = objectMapper.writeValueAsString(accHolderTransferDTO);
         MvcResult mvcResult = mockMvc.perform(put("/account-holder/transfer").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotAcceptable()).andReturn();
-
+        Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("Not enough money"));
     }
 
+    @Test
+    @DisplayName("Account Holder transferMoney throws exception")
+    void transferMoney_throws_Not_Found() throws Exception {
+        AccHolderTransferDTO accHolderTransferDTO = new AccHolderTransferDTO(50L,2L,BigDecimal.valueOf(50L));
+        String body = objectMapper.writeValueAsString(accHolderTransferDTO);
+        MvcResult mvcResult = mockMvc.perform(put("/account-holder/transfer").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound()).andReturn();
+        Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("owner"));
+
+        AccHolderTransferDTO accHolderTransferDTO2 = new AccHolderTransferDTO(3L,50L,BigDecimal.valueOf(50L));
+        String body2 = objectMapper.writeValueAsString(accHolderTransferDTO2);
+        MvcResult mvcResult2 = mockMvc.perform(put("/account-holder/transfer").content(body2).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound()).andReturn();
+        Assertions.assertTrue(mvcResult2.getResolvedException().toString().contains("receptor"));
+    }
     @Test
     @DisplayName("Account Holder getAccounts works ok")
     void getAccounts_works_ok() throws Exception {
         String body = objectMapper.writeValueAsString(2L);
         MvcResult mvcResult = mockMvc.perform(get("/account-holder").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isAccepted()).andReturn();
+        Assertions.assertTrue(mvcResult.getResponse().getContentAsString().contains("Quim"));
     }
 
     @Test
@@ -83,5 +102,6 @@ public class AccountHolderControllerTest {
         AddressDTO addressDTO = new AddressDTO(2L,"calle patata 5","Piruletalandia","09990","IBIZAAAAA","PartyLand");
         String body = objectMapper.writeValueAsString(addressDTO);
         MvcResult mvcResult = mockMvc.perform(put("/account-holder/add-mailing-address").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
+        Assertions.assertTrue(mvcResult.getResponse().getContentAsString().contains("IBIZAAAAA"));
     }
 }

@@ -23,12 +23,12 @@ public class AccountHolderController implements AccountHolderControllerInterface
     @ResponseStatus(HttpStatus.OK)
     public Money transferMoney(@RequestBody AccHolderTransferDTO accHolderTransferDTO){
         return accountHolderServiceInterface.transferMoneyByAccountType(accHolderTransferDTO.getOwnId(), accHolderTransferDTO.getOtherId(), accHolderTransferDTO.getAmount());
-    }
+    }/*test done*/
     @GetMapping("/account-holder")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public List<Account> getAccounts(@RequestBody Long id){
         return accountHolderServiceInterface.getAccounts(id);
-    }
+    }/*test done*/
 
     @PostMapping("/account-holder/create-user")
     @ResponseStatus(HttpStatus.CREATED)
@@ -46,11 +46,11 @@ public class AccountHolderController implements AccountHolderControllerInterface
     @ResponseStatus(HttpStatus.OK)
     public Address addMailingAddress(@RequestBody AddressDTO addressDTO){
         return accountHolderServiceInterface.addMailingAddress(addressDTO.getId(), addressDTO);
-    }
+    }/*test done*/
 
 
     @GetMapping("/account-holder/get-balance")
     public Money getBalance(@RequestBody Long id){
         return accountHolderServiceInterface.getBalance(id);
-    }
+    }/*test done*/
 }

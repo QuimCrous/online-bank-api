@@ -95,7 +95,7 @@ public class AccountHolderService implements AccountHolderServiceInterface {
         } else if (creditCardRepository.existsById(id)) {
             return getBalanceCreditCard(id);
         } else {
-            Account account = accountRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The user doesn't exist."));
+            Account account = accountRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The account doesn't exist."));
             return account.getBalance();
         }
 

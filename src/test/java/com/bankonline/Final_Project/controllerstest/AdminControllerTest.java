@@ -107,13 +107,15 @@ public class AdminControllerTest {
         AddSecondOwnerDTO addSecondOwnerDTO = new AddSecondOwnerDTO(1L,3L);
         String body = objectMapper.writeValueAsString(addSecondOwnerDTO);
         MvcResult mvcResult = mockMvc.perform(put("/admin/add-second-owner").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
+        Assertions.assertEquals(3L,accountRepository.findById(1L).get().getSecondaryOwner().getUserId());
     }
 
     @Test
     @DisplayName("Admin get all accounts works ok")
     void getAllAccounts_works_ok() throws Exception {
         MvcResult mvcResult = mockMvc.perform(get("/admin/get-all-accounts").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
-
+        System.out.println(mvcResult.getResponse().getContentAsString());
+        Assertions.assertTrue(mvcResult.getResponse().getContentAsString().contains("{\"id\":1,\"balance\":{\"currency\":\"EUR\",\"amount\":1000.00}"));
     }
 
 }

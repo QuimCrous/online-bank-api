@@ -20,5 +20,5 @@ public class ThirdPartyUserController implements ThirdPartyUserControllerInterfa
     @ResponseStatus(HttpStatus.OK)
     public Money chargeMoney(@RequestBody AccHolderTransferDTO accHolderTransferDTO){
         return thirdPartyUserServiceInterface.transferMoneyByAccountType(accHolderTransferDTO.getOwnId(), accHolderTransferDTO.getOtherId(), accHolderTransferDTO.getAmount());
-    }
+    }/*test done*/
 }
