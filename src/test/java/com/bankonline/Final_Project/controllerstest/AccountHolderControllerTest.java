@@ -20,8 +20,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -133,5 +132,13 @@ public class AccountHolderControllerTest {
         AccHolderTransferDTO accHolderTransferDTO = new AccHolderTransferDTO(7L,7L,BigDecimal.valueOf(10L));
         String body = objectMapper.writeValueAsString(accHolderTransferDTO);
         MvcResult mvcResult = mockMvc.perform(put("/account-holder/transfer").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotAcceptable()).andReturn();
+    }
+
+    @Test
+    @DisplayName("transferMoney throws exception strange amount comparison")
+    void transferMoney_throws_exception_CheckStrangeAmount() throws Exception {
+        AccHolderTransferDTO accHolderTransferDTO = new AccHolderTransferDTO(8L,7L,BigDecimal.valueOf(1000L));
+        String body = objectMapper.writeValueAsString(accHolderTransferDTO);
+        MvcResult mvcResult = mockMvc.perform(put("/account-holder/transfer").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden()).andReturn();
     }
 }

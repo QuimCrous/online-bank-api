@@ -82,7 +82,7 @@ public class AdminControllerTest {
         CreateAccountDTO createAccountDTO = new CreateAccountDTO(2L,"creditcard",BigDecimal.valueOf(500L),BigDecimal.valueOf(500L),BigDecimal.valueOf(0.15));
         String body = objectMapper.writeValueAsString(createAccountDTO);
         MvcResult mvcResult = mockMvc.perform(post("/admin/create-new-account-by-user").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn();
-        Assertions.assertEquals(7L,accountRepository.findById(8L).get().getPrimaryOwner().getUserId());
+        Assertions.assertEquals(5L,accountRepository.findById(8L).get().getPrimaryOwner().getUserId());
     }
 
     @Test

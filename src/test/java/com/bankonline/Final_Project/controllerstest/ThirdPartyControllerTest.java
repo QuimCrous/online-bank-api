@@ -48,7 +48,7 @@ public class ThirdPartyControllerTest {
         String body = objectMapper.writeValueAsString(accHolderTransferDTO);
         MvcResult mvcResult = mockMvc.perform(put("/third-party/charge").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
         System.out.println(mvcResult.getResponse().getContentAsString());
-        Assertions.assertEquals("{\"currency\":\"EUR\",\"amount\":990.00}",mvcResult.getResponse().getContentAsString());
+        Assertions.assertEquals("{\"currency\":\"EUR\",\"amount\":79990.00}",mvcResult.getResponse().getContentAsString());
     }
 
 }

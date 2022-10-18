@@ -6,9 +6,11 @@ import com.bankonline.Final_Project.enums.Status;
 import com.bankonline.Final_Project.models.accounts.CheckingAccount;
 import com.bankonline.Final_Project.models.accounts.CreditCard;
 import com.bankonline.Final_Project.models.accounts.SavingsAccount;
+import com.bankonline.Final_Project.models.transactions.Transaction;
 import com.bankonline.Final_Project.models.users.AccountHolder;
 import com.bankonline.Final_Project.models.users.Admin;
 import com.bankonline.Final_Project.repositories.accounts.AccountRepository;
+import com.bankonline.Final_Project.repositories.transactions.TransactionRepository;
 import com.bankonline.Final_Project.repositories.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -17,6 +19,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @SpringBootApplication
 public class FinalProjectApplication implements CommandLineRunner {
@@ -26,6 +30,8 @@ public class FinalProjectApplication implements CommandLineRunner {
 
 	@Autowired
 	AccountRepository accountRepository;
+	@Autowired
+	TransactionRepository transactionRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(FinalProjectApplication.class, args);
@@ -60,7 +66,7 @@ public class FinalProjectApplication implements CommandLineRunner {
 		savingsAccount2.setLastInterestRate(LocalDate.now());
 		accountRepository.save(savingsAccount2);
 		CheckingAccount checkingAccount2 = new CheckingAccount();
-		checkingAccount2.setBalance((BigDecimal.valueOf(1000)));
+		checkingAccount2.setBalance((BigDecimal.valueOf(80000)));
 		checkingAccount2.setPrimaryOwner(accountHolder3);
 		checkingAccount2.setCreationDate(LocalDate.now());
 		checkingAccount2.setLastInterestDay(LocalDate.now());
@@ -88,5 +94,28 @@ public class FinalProjectApplication implements CommandLineRunner {
 		creditCard2.setBalance(creditCard2.getCreditLimit());
 		creditCard2.setStatus(Status.FROZEN);
 		accountRepository.save(creditCard2);
+		CheckingAccount checkingAccount4 = new CheckingAccount();
+		checkingAccount4.setBalance((BigDecimal.valueOf(80000)));
+		checkingAccount4.setPrimaryOwner(accountHolder3);
+		checkingAccount4.setCreationDate(LocalDate.now());
+		checkingAccount4.setLastInterestDay(LocalDate.now());
+		accountRepository.save(checkingAccount4);
+
+		Transaction transaction1 = new Transaction(accountHolder3.getUserId(),checkingAccount4, creditCard2.getId(), BigDecimal.valueOf(150L), LocalDateTime.now().minusDays(9),"test");
+		Transaction transaction2 = new Transaction(accountHolder3.getUserId(),checkingAccount4, creditCard2.getId(), BigDecimal.valueOf(250L), LocalDateTime.now().minusDays(9),"test");
+		Transaction transaction3 = new Transaction(accountHolder3.getUserId(),checkingAccount4, creditCard2.getId(), BigDecimal.valueOf(50L), LocalDateTime.now().minusDays(8),"test");
+		Transaction transaction4 = new Transaction(accountHolder3.getUserId(),checkingAccount4, creditCard2.getId(), BigDecimal.valueOf(80L), LocalDateTime.now().minusDays(8),"test");
+		Transaction transaction5 = new Transaction(accountHolder3.getUserId(),checkingAccount4, creditCard2.getId(), BigDecimal.valueOf(50L), LocalDateTime.now().minusDays(5),"test");
+		Transaction transaction6 = new Transaction(accountHolder3.getUserId(),checkingAccount4, creditCard2.getId(), BigDecimal.valueOf(150L), LocalDateTime.now().minusDays(5),"test");
+		Transaction transaction7 = new Transaction(accountHolder3.getUserId(),checkingAccount4, creditCard2.getId(), BigDecimal.valueOf(450L), LocalDateTime.now().minusDays(4),"test");
+		Transaction transaction8 = new Transaction(accountHolder3.getUserId(),checkingAccount4, creditCard2.getId(), BigDecimal.valueOf(150L), LocalDateTime.now().minusDays(4),"test");
+		Transaction transaction9 = new Transaction(accountHolder3.getUserId(),checkingAccount4, creditCard2.getId(), BigDecimal.valueOf(150L), LocalDateTime.now().minusDays(3),"test");
+		Transaction transaction10 = new Transaction(accountHolder3.getUserId(),checkingAccount4, creditCard2.getId(), BigDecimal.valueOf(150L), LocalDateTime.now().minusDays(3),"test");
+		Transaction transaction11 = new Transaction(accountHolder3.getUserId(),checkingAccount4, creditCard2.getId(), BigDecimal.valueOf(50L), LocalDateTime.now().minusDays(2),"test");
+		Transaction transaction12 = new Transaction(accountHolder3.getUserId(),checkingAccount4, creditCard2.getId(), BigDecimal.valueOf(150L), LocalDateTime.now().minusDays(2),"test");
+		Transaction transaction13 = new Transaction(accountHolder3.getUserId(),checkingAccount4, creditCard2.getId(), BigDecimal.valueOf(50L), LocalDateTime.now().minusDays(1),"test");
+		Transaction transaction14 = new Transaction(accountHolder3.getUserId(),checkingAccount4, creditCard2.getId(), BigDecimal.valueOf(150L), LocalDateTime.now().minusDays(1),"test");
+		transactionRepository.saveAll(List.of(transaction1,transaction2,transaction3,transaction4,transaction5,transaction6,transaction7,transaction8,transaction9,transaction10,transaction11,transaction12,transaction13,transaction14));
+
 	}
 }
