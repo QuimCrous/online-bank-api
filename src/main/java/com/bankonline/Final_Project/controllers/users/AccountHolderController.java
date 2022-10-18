@@ -17,7 +17,7 @@ public class AccountHolderController implements AccountHolderControllerInterface
 
     @Autowired
     AccountHolderServiceInterface accountHolderServiceInterface;
-    @PatchMapping("/account-holder/transfer")
+    @PutMapping("/account-holder/transfer")
     @ResponseStatus(HttpStatus.OK)
     public String transferMoney(@RequestBody AccHolderTransferDTO accHolderTransferDTO){
         return accountHolderServiceInterface.transferMoneyByAccountType(accHolderTransferDTO.getOwnId(), accHolderTransferDTO.getOtherId(), accHolderTransferDTO.getAmount());

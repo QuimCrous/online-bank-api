@@ -37,11 +37,15 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     CreditCardRepository creditCardRepository;
 
     public String transferMoneyByAccountType(Long ownId, Long otherId, BigDecimal amount){
-        if (savingAccountRepository.existsById(ownId)){
+
+        if (savingAccountRepository.findById(ownId).isPresent()){
+
             return transferSavingAccount(ownId, otherId, amount);
-        } else if (checkingAccountRepository.existsById(ownId)) {
+        } else if (checkingAccountRepository.findById(ownId).isPresent()) {
+
             return transferCheckingAccount(ownId, otherId, amount);
         }else {
+
             return transferMoney(ownId, otherId,amount);
         }
     }
