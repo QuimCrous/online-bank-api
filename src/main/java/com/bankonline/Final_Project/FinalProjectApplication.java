@@ -9,13 +9,16 @@ import com.bankonline.Final_Project.models.accounts.SavingsAccount;
 import com.bankonline.Final_Project.models.transactions.Transaction;
 import com.bankonline.Final_Project.models.users.AccountHolder;
 import com.bankonline.Final_Project.models.users.Admin;
+import com.bankonline.Final_Project.models.users.Role;
 import com.bankonline.Final_Project.repositories.accounts.AccountRepository;
 import com.bankonline.Final_Project.repositories.transactions.TransactionRepository;
+import com.bankonline.Final_Project.repositories.users.RoleRepository;
 import com.bankonline.Final_Project.repositories.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -33,14 +36,22 @@ public class FinalProjectApplication implements CommandLineRunner {
 	@Autowired
 	TransactionRepository transactionRepository;
 
+	@Autowired
+	PasswordEncoder passwordEncoder;
+
+	@Autowired
+	RoleRepository roleRepository;
+
 	public static void main(String[] args) {
 		SpringApplication.run(FinalProjectApplication.class, args);
 	}
 
 	@Override
 	public void run(String... args) throws Exception {
-		userRepository.save(new Admin("Jaume"));
-		AccountHolder accountHolder = userRepository.save(new AccountHolder("Quim","mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street one, 1","city1","10010","province1","country1")));
+		Admin admin = userRepository.save(new Admin("Jaume", passwordEncoder.encode("1234")));
+		roleRepository.save(new Role("ADMIN", admin));
+		AccountHolder accountHolder = userRepository.save(new AccountHolder("Quim", passwordEncoder.encode("1234"), "mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street one, 1","city1","10010","province1","country1")));
+		roleRepository.save(new Role("USER", accountHolder));
 		AccountHolder accountHolder1 = userRepository.save(new AccountHolder("Oscar","mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street two, 2","city2","99999","province2","country2")));
 		AccountHolder accountHolder2 = userRepository.save(new AccountHolder("Aña","mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street three, 3","city3","AP002","province3","country3")));
 		AccountHolder accountHolder3 = userRepository.save(new AccountHolder("Danny","mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street four, 4","city4","08080","province4","country4")));
