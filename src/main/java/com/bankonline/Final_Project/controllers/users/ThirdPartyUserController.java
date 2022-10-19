@@ -1,6 +1,7 @@
 package com.bankonline.Final_Project.controllers.users;
 
 import com.bankonline.Final_Project.DTOs.AccHolderTransferDTO;
+import com.bankonline.Final_Project.DTOs.ThirdPartyDTO;
 import com.bankonline.Final_Project.Service.users.interfaces.ThirdPartyUserServiceInterface;
 import com.bankonline.Final_Project.controllers.users.interfaces.ThirdPartyUserControllerInterface;
 import com.bankonline.Final_Project.embedables.Money;
@@ -16,7 +17,7 @@ public class ThirdPartyUserController implements ThirdPartyUserControllerInterfa
 
     @PutMapping("/third-party/charge")
     @ResponseStatus(HttpStatus.OK)
-    public Money chargeMoney(@RequestBody AccHolderTransferDTO accHolderTransferDTO){
-        return thirdPartyUserServiceInterface.transferMoneyByAccountType(accHolderTransferDTO.getOwnId(), accHolderTransferDTO.getOtherId(), accHolderTransferDTO.getAmount());
+    public Money chargeMoney(@RequestHeader String hashKey, @RequestBody ThirdPartyDTO thirdPartyDTO){
+        return thirdPartyUserServiceInterface.transferMoneyByAccountType(hashKey, thirdPartyDTO.getOwnId(), thirdPartyDTO.getSecretKey(), thirdPartyDTO.getOtherId(), thirdPartyDTO.getAmount());
     }/*test done*/
 }

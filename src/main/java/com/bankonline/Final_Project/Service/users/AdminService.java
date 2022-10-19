@@ -5,12 +5,14 @@ import com.bankonline.Final_Project.Service.users.interfaces.AdminServiceInterfa
 import com.bankonline.Final_Project.enums.Status;
 import com.bankonline.Final_Project.models.accounts.*;
 import com.bankonline.Final_Project.models.users.AccountHolder;
+import com.bankonline.Final_Project.models.users.ThirdPartyUser;
 import com.bankonline.Final_Project.models.users.User;
 import com.bankonline.Final_Project.repositories.accounts.*;
 import com.bankonline.Final_Project.repositories.users.AccountHolderRepository;
 import com.bankonline.Final_Project.repositories.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -38,6 +40,8 @@ public class AdminService implements AdminServiceInterface {
     CheckingAccountRepository checkingAccountRepository;
     @Autowired
     StudentCheckingAccountRepository studentCheckingAccountRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     public Account modifyBalance(Long accountId, BigDecimal amount, String type){
 
@@ -80,6 +84,7 @@ public class AdminService implements AdminServiceInterface {
     }
     public Account createNewAccount(AccountHolderDTO accountHolderDTO){
         AccountHolder accountHolder = new AccountHolder(accountHolderDTO.getName(),accountHolderDTO.getMail(),accountHolderDTO.getPhone(),accountHolderDTO.getBirthDate());
+        accountHolder.setPassword(passwordEncoder.encode(accountHolderDTO.getPassword()));
         userRepository.save(accountHolder);
         System.out.println(accountHolderDTO.getAccountType());
         return switch (accountHolderDTO.getAccountType()) {
@@ -146,6 +151,17 @@ public class AdminService implements AdminServiceInterface {
     }
     public List<Account> getAllAccounts(){
         return accountRepository.findAll();
+    }
+
+    public ThirdPartyUser createThirdPartyUser(String name, String hashedKey){
+        ThirdPartyUser thirdPartyUser = new ThirdPartyUser(name, hashedKey);
+        return userRepository.save(thirdPartyUser);
+    }
+
+    public AccountHolder addPassword(Long userId, String password){
+        AccountHolder accountHolder = accountHolderRepository.findById(userId).orElseThrow();
+        accountHolder.setPassword(passwordEncoder.encode("password"));
+        return accountHolderRepository.save(accountHolder);
     }
 
 }

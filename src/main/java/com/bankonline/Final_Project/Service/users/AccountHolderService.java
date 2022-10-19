@@ -46,7 +46,8 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     @Autowired
     TransactionRepository transactionRepository;
 
-    public Money transferMoneyByAccountType(Long ownId, Long otherId, BigDecimal amount){
+    public Money transferMoneyByAccountType(String name, Long ownId, Long otherId, BigDecimal amount){
+        checkUserName(name, ownId);
         checkFraud(ownId);
         if (savingAccountRepository.findById(ownId).isPresent()){
             return transferSavingAccount(ownId, otherId, amount);
@@ -174,6 +175,13 @@ public class AccountHolderService implements AccountHolderServiceInterface {
                 throw new ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "Your account has been FROZEN due to fraud actions.");
 
             }
+        }
+    }
+
+    public void checkUserName(String name, Long ownId){
+        AccountHolder accountHolder = accountHolderRepository.findByName(name).get();
+        if (!accountRepository.findById(ownId).get().getPrimaryOwner().equals(accountHolder) && !accountRepository.findById(ownId).get().getSecondaryOwner().equals(accountHolder)){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not owner of the account.");
         }
     }
 

@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface AccountHolderServiceInterface {
-    Money transferMoneyByAccountType(Long ownId, Long otherId, BigDecimal amount);
+    Money transferMoneyByAccountType(String name, Long ownId, Long otherId, BigDecimal amount);
     List<Account> getAccounts(Long accountHolderId);
     AccountHolder createAccountHolder(AccountHolderDTO accountHolderDTO);
     Address addPrimaryAddress(Long id, AddressDTO addressDTO);

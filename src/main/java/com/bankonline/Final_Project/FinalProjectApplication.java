@@ -10,6 +10,7 @@ import com.bankonline.Final_Project.models.transactions.Transaction;
 import com.bankonline.Final_Project.models.users.AccountHolder;
 import com.bankonline.Final_Project.models.users.Admin;
 import com.bankonline.Final_Project.models.users.Role;
+import com.bankonline.Final_Project.models.users.ThirdPartyUser;
 import com.bankonline.Final_Project.repositories.accounts.AccountRepository;
 import com.bankonline.Final_Project.repositories.transactions.TransactionRepository;
 import com.bankonline.Final_Project.repositories.users.RoleRepository;
@@ -48,14 +49,15 @@ public class FinalProjectApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Admin admin = userRepository.save(new Admin("Jaume", passwordEncoder.encode("1234")));
+		Admin admin = userRepository.save(new Admin("Cloud", passwordEncoder.encode("1234")));
 		roleRepository.save(new Role("ADMIN", admin));
-		AccountHolder accountHolder = userRepository.save(new AccountHolder("Quim", passwordEncoder.encode("1234"), "mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street one, 1","city1","10010","province1","country1")));
+		AccountHolder accountHolder = userRepository.save(new AccountHolder("Tifa", passwordEncoder.encode("1234"), "mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street one, 1","city1","10010","province1","country1")));
 		roleRepository.save(new Role("USER", accountHolder));
-		AccountHolder accountHolder1 = userRepository.save(new AccountHolder("Oscar","mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street two, 2","city2","99999","province2","country2")));
-		AccountHolder accountHolder2 = userRepository.save(new AccountHolder("Aña","mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street three, 3","city3","AP002","province3","country3")));
-		AccountHolder accountHolder3 = userRepository.save(new AccountHolder("Danny","mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street four, 4","city4","08080","province4","country4")));
-		AccountHolder accountHolder4 = userRepository.save(new AccountHolder("Irina","mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street five,5","city5","77898","province5","country5")));
+		AccountHolder accountHolder1 = userRepository.save(new AccountHolder("Aeris",passwordEncoder.encode("1234"),"mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street two, 2","city2","99999","province2","country2")));
+		AccountHolder accountHolder2 = userRepository.save(new AccountHolder("Zelda",passwordEncoder.encode("1234"),"mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street three, 3","city3","AP002","province3","country3")));
+		AccountHolder accountHolder3 = userRepository.save(new AccountHolder("Link",passwordEncoder.encode("1234"),"mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street four, 4","city4","08080","province4","country4")));
+		AccountHolder accountHolder4 = userRepository.save(new AccountHolder("Ganondorf",passwordEncoder.encode("1234"),"mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street five,5","city5","77898","province5","country5")));
+		ThirdPartyUser thirdPartyUser = userRepository.save(new ThirdPartyUser("Colmado Ganondorf","aa@1"));
 
 		SavingsAccount savingsAccount = new SavingsAccount();
 		savingsAccount.setBalance(BigDecimal.valueOf(1000));
@@ -63,30 +65,35 @@ public class FinalProjectApplication implements CommandLineRunner {
 		savingsAccount.setCreationDate(LocalDate.of(2021,01,01));
 		savingsAccount.setLastInterestRate(LocalDate.of(2021,01,01));
 		savingsAccount.setInterestRate(BigDecimal.valueOf(0.5000));
+		savingsAccount.setSecretKey(1234);
 		accountRepository.save(savingsAccount);
 		CheckingAccount checkingAccount = new CheckingAccount();
 		checkingAccount.setBalance(BigDecimal.valueOf(1000));
 		checkingAccount.setPrimaryOwner(accountHolder1);
 		checkingAccount.setCreationDate(LocalDate.of(2020,01,01));
 		checkingAccount.setLastInterestDay(LocalDate.of(2020,01,01));
+		checkingAccount.setSecretKey(1234);
 		accountRepository.save(checkingAccount);
 		SavingsAccount savingsAccount2 = new SavingsAccount();
 		savingsAccount2.setBalance((BigDecimal.valueOf(1000)));
 		savingsAccount2.setPrimaryOwner(accountHolder2);
 		savingsAccount2.setCreationDate(LocalDate.now());
 		savingsAccount2.setLastInterestRate(LocalDate.now());
+		savingsAccount2.setSecretKey(1234);
 		accountRepository.save(savingsAccount2);
 		CheckingAccount checkingAccount2 = new CheckingAccount();
 		checkingAccount2.setBalance((BigDecimal.valueOf(80000)));
 		checkingAccount2.setPrimaryOwner(accountHolder3);
 		checkingAccount2.setCreationDate(LocalDate.now());
 		checkingAccount2.setLastInterestDay(LocalDate.now());
+		checkingAccount2.setSecretKey(1234);
 		accountRepository.save(checkingAccount2);
 		CheckingAccount checkingAccount3 = new CheckingAccount();
 		checkingAccount3.setBalance((BigDecimal.valueOf(1000)));
 		checkingAccount3.setPrimaryOwner(accountHolder4);
 		checkingAccount3.setCreationDate(LocalDate.now());
 		checkingAccount3.setLastInterestDay(LocalDate.now());
+		checkingAccount3.setSecretKey(1234);
 		accountRepository.save(checkingAccount3);
 		CreditCard creditCard = new CreditCard();
 		creditCard.setPrimaryOwner(accountHolder4);
@@ -95,6 +102,7 @@ public class FinalProjectApplication implements CommandLineRunner {
 		creditCard.setCreditLimit(BigDecimal.valueOf(500L));
 		creditCard.setInterestRate(BigDecimal.valueOf(0.15));
 		creditCard.setBalance(creditCard.getCreditLimit());
+		creditCard.setSecretKey(1234);
 		accountRepository.save(creditCard);
 		CreditCard creditCard2 = new CreditCard();
 		creditCard2.setPrimaryOwner(accountHolder4);
@@ -104,12 +112,14 @@ public class FinalProjectApplication implements CommandLineRunner {
 		creditCard2.setInterestRate(BigDecimal.valueOf(0.15));
 		creditCard2.setBalance(creditCard2.getCreditLimit());
 		creditCard2.setStatus(Status.FROZEN);
+		creditCard2.setSecretKey(1234);
 		accountRepository.save(creditCard2);
 		CheckingAccount checkingAccount4 = new CheckingAccount();
 		checkingAccount4.setBalance((BigDecimal.valueOf(80000)));
 		checkingAccount4.setPrimaryOwner(accountHolder3);
 		checkingAccount4.setCreationDate(LocalDate.now());
 		checkingAccount4.setLastInterestDay(LocalDate.now());
+		checkingAccount4.setSecretKey(1234);
 		accountRepository.save(checkingAccount4);
 
 		Transaction transaction1 = new Transaction(accountHolder3.getUserId(),checkingAccount4, creditCard2.getId(), BigDecimal.valueOf(150L), LocalDateTime.now().minusDays(9),"test");

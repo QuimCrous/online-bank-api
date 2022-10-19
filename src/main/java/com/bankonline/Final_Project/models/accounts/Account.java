@@ -33,14 +33,17 @@ public abstract class Account {
     })
     private final Money penaltyFee = new Money(BigDecimal.valueOf(40L));
 
+    private Integer secretKey;
+
     public Account() {
     }
 
-    public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, LocalDate creationDate) {
+    public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, LocalDate creationDate, Integer secretKey) {
         this.balance = balance;
         this.primaryOwner = primaryOwner;
         this.secondaryOwner = secondaryOwner;
         this.creationDate = creationDate;
+        this.secretKey = secretKey;
     }
 
     public Long getId() {
@@ -97,4 +100,12 @@ public abstract class Account {
     }
 
 
+
+    public Integer getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(Integer secretKey) {
+        this.secretKey = secretKey;
+    }
 }

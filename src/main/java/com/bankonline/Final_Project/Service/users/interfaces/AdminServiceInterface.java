@@ -3,6 +3,8 @@ package com.bankonline.Final_Project.Service.users.interfaces;
 import com.bankonline.Final_Project.DTOs.AccountHolderDTO;
 import com.bankonline.Final_Project.DTOs.CreateAccountDTO;
 import com.bankonline.Final_Project.models.accounts.Account;
+import com.bankonline.Final_Project.models.users.AccountHolder;
+import com.bankonline.Final_Project.models.users.ThirdPartyUser;
 import com.bankonline.Final_Project.models.users.User;
 
 import java.math.BigDecimal;
@@ -18,4 +20,6 @@ public interface AdminServiceInterface {
     Account createNewAccountByUser(CreateAccountDTO createAccountDTO);
     String addSecondaryOwner(Long secondId, Long accountId);
     List<Account> getAllAccounts();
+    ThirdPartyUser createThirdPartyUser(String name, String hashedKey);
+    AccountHolder addPassword(Long userId, String password);
 }

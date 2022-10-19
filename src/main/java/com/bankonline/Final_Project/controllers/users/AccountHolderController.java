@@ -10,6 +10,8 @@ import com.bankonline.Final_Project.models.accounts.Account;
 import com.bankonline.Final_Project.models.users.AccountHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,8 +23,8 @@ public class AccountHolderController implements AccountHolderControllerInterface
     AccountHolderServiceInterface accountHolderServiceInterface;
     @PutMapping("/account-holder/transfer")
     @ResponseStatus(HttpStatus.OK)
-    public Money transferMoney(@RequestBody AccHolderTransferDTO accHolderTransferDTO){
-        return accountHolderServiceInterface.transferMoneyByAccountType(accHolderTransferDTO.getOwnId(), accHolderTransferDTO.getOtherId(), accHolderTransferDTO.getAmount());
+    public Money transferMoney(@AuthenticationPrincipal UserDetails userDetails, @RequestBody AccHolderTransferDTO accHolderTransferDTO){
+        return accountHolderServiceInterface.transferMoneyByAccountType(userDetails.getUsername(), accHolderTransferDTO.getOwnId(), accHolderTransferDTO.getOtherId(), accHolderTransferDTO.getAmount());
     }/*test done*/
     @GetMapping("/account-holder")
     @ResponseStatus(HttpStatus.ACCEPTED)

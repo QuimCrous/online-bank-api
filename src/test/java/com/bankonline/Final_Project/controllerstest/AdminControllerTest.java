@@ -71,7 +71,7 @@ public class AdminControllerTest {
     @Test
     @DisplayName("what")
     void createNewUserAccount_works_ok() throws Exception {
-        AccountHolderDTO accountHolderDTO = new AccountHolderDTO("Pablo","mail@test.com","123456789", LocalDate.of(1987,04,05),"savingsaccount",BigDecimal.valueOf(1500L),BigDecimal.valueOf(1500L),BigDecimal.valueOf(0.15));
+        AccountHolderDTO accountHolderDTO = new AccountHolderDTO("Pablo","mail@test.com","123456789", LocalDate.of(1987,04,05),"savingsaccount",BigDecimal.valueOf(1500L),BigDecimal.valueOf(1500L),BigDecimal.valueOf(0.15),"patata");
         String body = objectMapper.writeValueAsString(accountHolderDTO);
         MvcResult mvcResult = mockMvc.perform(post("/admin/create-new-user-account").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn();
     }
@@ -89,10 +89,10 @@ public class AdminControllerTest {
     @DisplayName("Admin get all users works ok")
     void getAllUsers_works_ok() throws  Exception {
         MvcResult mvcResult = mockMvc.perform(get("/admin/all-users").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
-        assertTrue(mvcResult.getResponse().getContentAsString().contains("Quim"));
-        assertTrue(mvcResult.getResponse().getContentAsString().contains("Oscar"));
-        assertTrue(mvcResult.getResponse().getContentAsString().contains("Danny"));
-        assertTrue(mvcResult.getResponse().getContentAsString().contains("Jaume"));
+        assertTrue(mvcResult.getResponse().getContentAsString().contains("Tifa"));
+        assertTrue(mvcResult.getResponse().getContentAsString().contains("Aeris"));
+        assertTrue(mvcResult.getResponse().getContentAsString().contains("Zelda"));
+        assertTrue(mvcResult.getResponse().getContentAsString().contains("Link"));
     }
 
     @Test

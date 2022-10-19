@@ -4,6 +4,8 @@ import com.bankonline.Final_Project.DTOs.*;
 import com.bankonline.Final_Project.Service.users.interfaces.AdminServiceInterface;
 import com.bankonline.Final_Project.controllers.users.interfaces.AdminControllerInterface;
 import com.bankonline.Final_Project.models.accounts.Account;
+import com.bankonline.Final_Project.models.users.AccountHolder;
+import com.bankonline.Final_Project.models.users.ThirdPartyUser;
 import com.bankonline.Final_Project.models.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,7 +34,7 @@ public class AdminController implements AdminControllerInterface {
     @ResponseStatus(HttpStatus.CREATED)
     public Account createNewUserAccount(@RequestBody AccountHolderDTO accountHolderDTO){
         return adminServiceInterface.createNewAccount(accountHolderDTO);
-    }
+    }/*test done*/
 
     @GetMapping("/admin/all-users")
     @ResponseStatus(HttpStatus.OK)
@@ -60,5 +62,17 @@ public class AdminController implements AdminControllerInterface {
     public List<Account> getAllAccounts(){
         return adminServiceInterface.getAllAccounts();
     }/*test done*/
+
+    @PostMapping("/admin/create-third-party")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ThirdPartyUser createThirdPartyUser(@RequestBody ThirdPartyUser thirdPartyUser){
+        return adminServiceInterface.createThirdPartyUser(thirdPartyUser.getName(), thirdPartyUser.getHashedKey());
+    }
+
+    @PutMapping("/admin/account-holder-password")
+    @ResponseStatus(HttpStatus.OK)
+    public AccountHolder addPassword(@RequestBody PasswordDTO passwordDTO){
+        return adminServiceInterface.addPassword(passwordDTO.getUserId(), passwordDTO.getPassword());
+    }
 
 }
