@@ -32,11 +32,12 @@ public class AccountHolderController implements AccountHolderControllerInterface
         return accountHolderServiceInterface.getAccounts(id);
     }/*test done*/
 
-    @PostMapping("/account-holder/create-user")
-    @ResponseStatus(HttpStatus.CREATED)
-    public AccountHolder createAccountHolder(@RequestBody AccountHolderDTO accountHolderDTO){
-        return accountHolderServiceInterface.createAccountHolder(accountHolderDTO);
-    }
+    //This method is for creating an Account Holder but in the last moment I only aallowe Admins to create Account Holders
+//    @PostMapping("/account-holder/create-user")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public AccountHolder createAccountHolder(@RequestBody AccountHolderDTO accountHolderDTO){
+//        return accountHolderServiceInterface.createAccountHolder(accountHolderDTO);
+//    }
 
     @PutMapping("/account-holder/add-primary-address")
     @ResponseStatus(HttpStatus.OK)
@@ -52,7 +53,7 @@ public class AccountHolderController implements AccountHolderControllerInterface
 
 
     @GetMapping("/account-holder/get-balance")
-    public Money getBalance(@RequestBody Long id){
-        return accountHolderServiceInterface.getBalance(id);
+    public Money getBalance(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Long id){
+        return accountHolderServiceInterface.getBalance(id, userDetails.getUsername());
     }/*test done*/
 }

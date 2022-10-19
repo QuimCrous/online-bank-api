@@ -54,9 +54,13 @@ public class FinalProjectApplication implements CommandLineRunner {
 		AccountHolder accountHolder = userRepository.save(new AccountHolder("Tifa", passwordEncoder.encode("1234"), "mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street one, 1","city1","10010","province1","country1")));
 		roleRepository.save(new Role("USER", accountHolder));
 		AccountHolder accountHolder1 = userRepository.save(new AccountHolder("Aeris",passwordEncoder.encode("1234"),"mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street two, 2","city2","99999","province2","country2")));
+		roleRepository.save(new Role("USER", accountHolder1));
 		AccountHolder accountHolder2 = userRepository.save(new AccountHolder("Zelda",passwordEncoder.encode("1234"),"mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street three, 3","city3","AP002","province3","country3")));
+		roleRepository.save(new Role("USER", accountHolder2));
 		AccountHolder accountHolder3 = userRepository.save(new AccountHolder("Link",passwordEncoder.encode("1234"),"mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street four, 4","city4","08080","province4","country4")));
+		roleRepository.save(new Role("USER", accountHolder3));
 		AccountHolder accountHolder4 = userRepository.save(new AccountHolder("Ganondorf",passwordEncoder.encode("1234"),"mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street five,5","city5","77898","province5","country5")));
+		roleRepository.save(new Role("USER", accountHolder4));
 		ThirdPartyUser thirdPartyUser = userRepository.save(new ThirdPartyUser("Colmado Ganondorf","aa@1"));
 
 		SavingsAccount savingsAccount = new SavingsAccount();

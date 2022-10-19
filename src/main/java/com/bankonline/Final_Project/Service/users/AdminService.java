@@ -4,18 +4,16 @@ import com.bankonline.Final_Project.DTOs.CreateAccountDTO;
 import com.bankonline.Final_Project.Service.users.interfaces.AdminServiceInterface;
 import com.bankonline.Final_Project.enums.Status;
 import com.bankonline.Final_Project.models.accounts.*;
-import com.bankonline.Final_Project.models.users.AccountHolder;
-import com.bankonline.Final_Project.models.users.ThirdPartyUser;
-import com.bankonline.Final_Project.models.users.User;
+import com.bankonline.Final_Project.models.users.*;
 import com.bankonline.Final_Project.repositories.accounts.*;
 import com.bankonline.Final_Project.repositories.users.AccountHolderRepository;
+import com.bankonline.Final_Project.repositories.users.RoleRepository;
 import com.bankonline.Final_Project.repositories.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
@@ -23,6 +21,8 @@ import java.util.List;
 
 @Service
 public class AdminService implements AdminServiceInterface {
+
+
 
     @Autowired
     AccountRepository accountRepository;
@@ -42,6 +42,9 @@ public class AdminService implements AdminServiceInterface {
     StudentCheckingAccountRepository studentCheckingAccountRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    RoleRepository roleRepository;
 
     public Account modifyBalance(Long accountId, BigDecimal amount, String type){
 
@@ -86,6 +89,7 @@ public class AdminService implements AdminServiceInterface {
         AccountHolder accountHolder = new AccountHolder(accountHolderDTO.getName(),accountHolderDTO.getMail(),accountHolderDTO.getPhone(),accountHolderDTO.getBirthDate());
         accountHolder.setPassword(passwordEncoder.encode(accountHolderDTO.getPassword()));
         userRepository.save(accountHolder);
+        roleRepository.save(new Role("USER", accountHolder));
         System.out.println(accountHolderDTO.getAccountType());
         return switch (accountHolderDTO.getAccountType()) {
             case "savingsaccount" ->
@@ -162,6 +166,13 @@ public class AdminService implements AdminServiceInterface {
         AccountHolder accountHolder = accountHolderRepository.findById(userId).orElseThrow();
         accountHolder.setPassword(passwordEncoder.encode("password"));
         return accountHolderRepository.save(accountHolder);
+    }
+
+    public Admin createAdmin(String name, String password){
+        Admin admin = new Admin(name, passwordEncoder.encode(password));
+        userRepository.save(admin);
+        roleRepository.save(new Role("ADMIN", admin));
+        return admin;
     }
 
 }

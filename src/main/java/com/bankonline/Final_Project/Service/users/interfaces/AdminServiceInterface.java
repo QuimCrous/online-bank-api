@@ -4,6 +4,7 @@ import com.bankonline.Final_Project.DTOs.AccountHolderDTO;
 import com.bankonline.Final_Project.DTOs.CreateAccountDTO;
 import com.bankonline.Final_Project.models.accounts.Account;
 import com.bankonline.Final_Project.models.users.AccountHolder;
+import com.bankonline.Final_Project.models.users.Admin;
 import com.bankonline.Final_Project.models.users.ThirdPartyUser;
 import com.bankonline.Final_Project.models.users.User;
 
@@ -22,4 +23,5 @@ public interface AdminServiceInterface {
     List<Account> getAllAccounts();
     ThirdPartyUser createThirdPartyUser(String name, String hashedKey);
     AccountHolder addPassword(Long userId, String password);
+    Admin createAdmin(String name, String password);
 }

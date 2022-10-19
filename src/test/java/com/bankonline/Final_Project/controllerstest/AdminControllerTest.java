@@ -2,6 +2,7 @@ package com.bankonline.Final_Project.controllerstest;
 
 import com.bankonline.Final_Project.DTOs.*;
 import com.bankonline.Final_Project.enums.Status;
+import com.bankonline.Final_Project.models.users.ThirdPartyUser;
 import com.bankonline.Final_Project.repositories.accounts.AccountRepository;
 import com.bankonline.Final_Project.repositories.users.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -119,5 +120,26 @@ public class AdminControllerTest {
         System.out.println(mvcResult.getResponse().getContentAsString());
         Assertions.assertTrue(mvcResult.getResponse().getContentAsString().contains("{\"id\":1,\"balance\":{\"currency\":\"EUR\",\"amount\":1000.00}"));
     }
+
+    @Test
+    @DisplayName("Create Third Party works")
+    void createThirdPartyUser() throws Exception {
+        ThirdPartyUser thirdPartyUser = new ThirdPartyUser("Little Secrets, S.L.","BBclo4@");
+        String body = objectMapper.writeValueAsString(thirdPartyUser);
+        MvcResult mvcResult = mockMvc.perform(post("/admin/create-third-party").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn();
+        System.out.println(mvcResult.getResponse().getContentAsString());
+        Assertions.assertTrue(mvcResult.getResponse().getContentAsString().contains("Little Secrets, S.L."));
+    }
+
+    @Test
+    @DisplayName("Create Admin works ok")
+    void createAdmin_works_ok() throws Exception {
+        AdminDTO adminDTO = new AdminDTO("RuPaul","YasssQw33n");
+        String body = objectMapper.writeValueAsString(adminDTO);
+        MvcResult mvcResult = mockMvc.perform(post("/admin/create-admin").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn();
+        System.out.println(mvcResult.getResponse().getContentAsString());
+        Assertions.assertTrue(mvcResult.getResponse().getContentAsString().contains("RuPaul"));
+    }
+
 
 }

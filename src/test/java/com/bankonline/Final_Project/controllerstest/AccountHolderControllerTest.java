@@ -53,6 +53,7 @@ public class AccountHolderControllerTest {
     }
 
     @Test
+    @WithMockUser("Aeris")
     @DisplayName("Account Holder getBalance works ok")
     void getBalance_works_ok() throws Exception {
         String body = objectMapper.writeValueAsString(2L);
@@ -61,7 +62,8 @@ public class AccountHolderControllerTest {
     }
 
     @Test
-    @DisplayName("Account Holder getBalance works ok")
+    @WithMockUser("Aeris")
+    @DisplayName("Account Holder getBalance throws exception")
     void getBalance_throws_Not_Found() throws Exception {
         String body = objectMapper.writeValueAsString(90L);
         MvcResult mvcResult = mockMvc.perform(get("/account-holder/get-balance").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound()).andReturn();
@@ -91,11 +93,6 @@ public class AccountHolderControllerTest {
     @WithMockUser("Zelda")
     @DisplayName("Account Holder transferMoney throws exception")
     void transferMoney_throws_Not_Found() throws Exception {
-//        AccHolderTransferDTO accHolderTransferDTO = new AccHolderTransferDTO(50L,2L,BigDecimal.valueOf(50L));
-//        String body = objectMapper.writeValueAsString(accHolderTransferDTO);
-//        MvcResult mvcResult = mockMvc.perform(put("/account-holder/transfer").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound()).andReturn();
-//        Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("owner"));
-
         AccHolderTransferDTO accHolderTransferDTO2 = new AccHolderTransferDTO(3L,50L,BigDecimal.valueOf(50L));
         String body2 = objectMapper.writeValueAsString(accHolderTransferDTO2);
         MvcResult mvcResult2 = mockMvc.perform(put("/account-holder/transfer").content(body2).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound()).andReturn();

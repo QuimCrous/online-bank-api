@@ -5,6 +5,7 @@ import com.bankonline.Final_Project.Service.users.interfaces.AdminServiceInterfa
 import com.bankonline.Final_Project.controllers.users.interfaces.AdminControllerInterface;
 import com.bankonline.Final_Project.models.accounts.Account;
 import com.bankonline.Final_Project.models.users.AccountHolder;
+import com.bankonline.Final_Project.models.users.Admin;
 import com.bankonline.Final_Project.models.users.ThirdPartyUser;
 import com.bankonline.Final_Project.models.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,12 +68,18 @@ public class AdminController implements AdminControllerInterface {
     @ResponseStatus(HttpStatus.CREATED)
     public ThirdPartyUser createThirdPartyUser(@RequestBody ThirdPartyUser thirdPartyUser){
         return adminServiceInterface.createThirdPartyUser(thirdPartyUser.getName(), thirdPartyUser.getHashedKey());
-    }
+    }/*test done*/
 
     @PutMapping("/admin/account-holder-password")
     @ResponseStatus(HttpStatus.OK)
     public AccountHolder addPassword(@RequestBody PasswordDTO passwordDTO){
         return adminServiceInterface.addPassword(passwordDTO.getUserId(), passwordDTO.getPassword());
     }
+
+    @PostMapping("/admin/create-admin")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Admin createAdmin(@RequestBody AdminDTO adminDTO){
+        return adminServiceInterface.createAdmin(adminDTO.getName(),adminDTO.getPassword());
+    }/*test done*/
 
 }

@@ -26,7 +26,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class AccountHolderService implements AccountHolderServiceInterface {
@@ -59,7 +59,7 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     }
     public Money transferSavingAccount(Long ownId, Long otherId, BigDecimal amount){
         SavingsAccount ownAccount = savingAccountRepository.findById(ownId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The owner account Id doesn't exist"));
-        if (ownAccount.getStatus().equals(Status.FROZEN)) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"lolroloroloooo");
+        if (ownAccount.getStatus().equals(Status.FROZEN)) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"The account is FROZEN");
         checkStrangeAmount(ownId, amount);
         Account otherAccount = accountRepository.findById(otherId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The receptor account Id doesn't exist"));
         if (ownAccount.getBalance().getAmount().compareTo(amount) < 0) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"Not enough money to do the transfer");
@@ -75,7 +75,7 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     }
     public Money transferCheckingAccount(Long ownId, Long otherId, BigDecimal amount){
         CheckingAccount ownAccount = checkingAccountRepository.findById(ownId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The owner account Id doesn't exist"));
-        if (ownAccount.getStatus().equals(Status.FROZEN)) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"lolroloroloooo");
+        if (ownAccount.getStatus().equals(Status.FROZEN)) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"The account is FROZEN");
         checkStrangeAmount(ownId, amount);
         Account otherAccount = accountRepository.findById(otherId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The receptor account Id doesn't exist"));
         if (ownAccount.getBalance().getAmount().compareTo(amount) < 0) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"Not enough money to do the transfer");
@@ -92,7 +92,7 @@ public class AccountHolderService implements AccountHolderServiceInterface {
 
     public Money transferMoney(Long ownId, Long otherId, BigDecimal amount){
         Account ownAccount = accountRepository.findById(ownId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The owner account Id doesn't exist"));
-        if (ownAccount.getStatus().equals(Status.FROZEN)) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"lolroloroloooo");
+        if (ownAccount.getStatus().equals(Status.FROZEN)) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"The account is FROZEN");
         checkStrangeAmount(ownId, amount);
         Account otherAccount = accountRepository.findById(otherId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The receptor account Id doesn't exist"));
         if (ownAccount.getBalance().getAmount().compareTo(amount) < 0) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"Not enough money to do the transfer");
@@ -110,12 +110,15 @@ public class AccountHolderService implements AccountHolderServiceInterface {
         return accountList;
     }
 
-    public Money getBalance(Long id){
+    public Money getBalance(Long id, String userName){
         if (savingAccountRepository.existsById(id)){
+            checkUserName(userName, id);
             return getBalanceSavingAccount(id);
         } else if (checkingAccountRepository.existsById(id)) {
+            checkUserName(userName, id);
             return getBalanceCheckingAccount(id);
         } else if (creditCardRepository.existsById(id)) {
+            checkUserName(userName, id);
             return getBalanceCreditCard(id);
         } else {
             Account account = accountRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The account doesn't exist."));
@@ -180,8 +183,10 @@ public class AccountHolderService implements AccountHolderServiceInterface {
 
     public void checkUserName(String name, Long ownId){
         AccountHolder accountHolder = accountHolderRepository.findByName(name).get();
-        if (!accountRepository.findById(ownId).get().getPrimaryOwner().equals(accountHolder) && !accountRepository.findById(ownId).get().getSecondaryOwner().equals(accountHolder)){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not owner of the account.");
+        if (!accountRepository.findById(ownId).get().getPrimaryOwner().equals(accountHolder)){
+            if (accountRepository.findById(ownId).get().getSecondaryOwner() == null || !accountRepository.findById(ownId).get().getSecondaryOwner().equals(accountHolder)){
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not owner of the account.");
+            }
         }
     }
 

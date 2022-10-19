@@ -59,7 +59,7 @@ public class CreditCard extends Account{
         BigDecimal bigDecimal2 = interestRate.divide(BigDecimal.valueOf(12),4, RoundingMode.HALF_EVEN);
         while (Period.between(getLastInterestDay().plusMonths(1), LocalDate.now()).getMonths() >= 0){
             BigDecimal bigDecimal = getBalance().getAmount().multiply(bigDecimal2);
-            setBalance((getBalance().increaseAmount(bigDecimal)));
+            setBalance((getBalance().decreaseAmount(bigDecimal)));
             setLastInterestDay(lastInterestDay.plusMonths(1));
         }
         setLastInterestDay(LocalDate.now());

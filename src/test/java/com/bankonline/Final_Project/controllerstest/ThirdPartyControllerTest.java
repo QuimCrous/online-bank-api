@@ -52,7 +52,7 @@ public class ThirdPartyControllerTest {
     }
 
     @Test
-    @DisplayName("Third Party chargeMoney works ok")
+    @DisplayName("Third Party chargeMoney throws exception")
     void chargeMoney_throws_exception() throws Exception {
         ThirdPartyDTO thirdPartyDTO = new ThirdPartyDTO(4L, 6L, BigDecimal.valueOf(10L), Integer.parseInt("1234"));
         String body = objectMapper.writeValueAsString(thirdPartyDTO);
@@ -63,12 +63,11 @@ public class ThirdPartyControllerTest {
     }
 
     @Test
-    @DisplayName("Third Party chargeMoney works ok")
+    @DisplayName("Third Party chargeMoney throws exception")
     void chargeMoney_throws_exception2() throws Exception {
         ThirdPartyDTO thirdPartyDTO = new ThirdPartyDTO(4L, 6L, BigDecimal.valueOf(10L), Integer.parseInt("1234"));
         String body = objectMapper.writeValueAsString(thirdPartyDTO);
         MvcResult mvcResult = mockMvc.perform(put("/third-party/charge").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest()).andReturn();
-        System.out.println(mvcResult.getResolvedException().toString());
         Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("Required request header 'hashKey' for method parameter type String is not present"));
 
     }

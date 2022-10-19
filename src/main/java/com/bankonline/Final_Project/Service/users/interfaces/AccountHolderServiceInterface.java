@@ -16,5 +16,5 @@ public interface AccountHolderServiceInterface {
     AccountHolder createAccountHolder(AccountHolderDTO accountHolderDTO);
     Address addPrimaryAddress(Long id, AddressDTO addressDTO);
     Address addMailingAddress(Long id, AddressDTO addressDTO);
-    Money getBalance(Long id);
+    Money getBalance(Long id, String userName);
 }

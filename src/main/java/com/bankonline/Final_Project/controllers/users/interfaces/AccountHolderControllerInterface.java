@@ -16,8 +16,8 @@ import java.util.List;
 public interface AccountHolderControllerInterface {
     Money transferMoney(@AuthenticationPrincipal UserDetails userDetails, @RequestBody AccHolderTransferDTO accHolderTransferDTO);
     List<Account> getAccounts(@RequestBody Long id);
-    AccountHolder createAccountHolder(@RequestBody AccountHolderDTO accountHolderDTO);
+//    AccountHolder createAccountHolder(@RequestBody AccountHolderDTO accountHolderDTO);
     Address addPrimaryAddress(@RequestBody AddressDTO addressDTO);
     Address addMailingAddress(@RequestBody AddressDTO addressDTO);
-    Money getBalance(@RequestBody Long id);
+    Money getBalance( @AuthenticationPrincipal UserDetails userDetails, @RequestBody Long id);
 }
