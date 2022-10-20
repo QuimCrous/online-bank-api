@@ -70,7 +70,7 @@ public class AdminControllerTest {
     }
 
     @Test
-    @DisplayName("what")
+    @DisplayName("Create new account holder and new account works ok")
     void createNewUserAccount_works_ok() throws Exception {
         AccountHolderDTO accountHolderDTO = new AccountHolderDTO("Pablo","mail@test.com","123456789", LocalDate.of(1987,04,05),"savingsaccount",BigDecimal.valueOf(1500L),BigDecimal.valueOf(1500L),BigDecimal.valueOf(0.15),"patata",1234);
         String body = objectMapper.writeValueAsString(accountHolderDTO);
