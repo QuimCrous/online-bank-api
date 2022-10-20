@@ -72,18 +72,16 @@ public class AdminService implements AdminServiceInterface {
         return userRepository.findAll();
     }
 
-    public String deleteAccount(Long id){
+    public void deleteAccount(Long id){
         Account account = accountRepository.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Incorrect Account id"));
         String response = "The account with "+ account.getId() + " id has been deleted.";
         accountRepository.delete(account);
-        return response;
     }
-    public String addSecondaryOwner(Long secondId, Long accountId){
+    public void addSecondaryOwner(Long secondId, Long accountId){
         AccountHolder accountHolder2 = accountHolderRepository.findById(secondId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The id is incorrect."));
         Account account = accountRepository.findById(accountId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The id is incorrect."));
         account.setSecondaryOwner(accountHolder2);
         accountRepository.save(account);
-        return "The secondary owner has been updated";
     }
     public Account createNewAccount(AccountHolderDTO accountHolderDTO){
         AccountHolder accountHolder = new AccountHolder(accountHolderDTO.getName(),accountHolderDTO.getMail(),accountHolderDTO.getPhone(),accountHolderDTO.getBirthDate());

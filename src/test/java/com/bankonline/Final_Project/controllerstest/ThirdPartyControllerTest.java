@@ -44,17 +44,17 @@ public class ThirdPartyControllerTest {
     @Test
     @DisplayName("Third Party chargeMoney works ok")
     void chargeMoney_works_Ok() throws Exception {
-        ThirdPartyDTO thirdPartyDTO = new ThirdPartyDTO(4L, 6L, BigDecimal.valueOf(10L), Integer.parseInt("1234"));
+        ThirdPartyDTO thirdPartyDTO = new ThirdPartyDTO(4L, "decrease", BigDecimal.valueOf(10L), Integer.parseInt("1234"));
         String body = objectMapper.writeValueAsString(thirdPartyDTO);
         MvcResult mvcResult = mockMvc.perform(put("/third-party/charge").header("hashKey","aa@1").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
         System.out.println(mvcResult.getResponse().getContentAsString());
-        Assertions.assertEquals("{\"currency\":\"EUR\",\"amount\":79990.00}",mvcResult.getResponse().getContentAsString());
+        Assertions.assertEquals("{\"currency\":\"EUR\",\"amount\":10.00}",mvcResult.getResponse().getContentAsString());
     }
 
     @Test
     @DisplayName("Third Party chargeMoney throws exception")
     void chargeMoney_throws_exception() throws Exception {
-        ThirdPartyDTO thirdPartyDTO = new ThirdPartyDTO(4L, 6L, BigDecimal.valueOf(10L), Integer.parseInt("1234"));
+        ThirdPartyDTO thirdPartyDTO = new ThirdPartyDTO(4L, "increase", BigDecimal.valueOf(10L), Integer.parseInt("1234"));
         String body = objectMapper.writeValueAsString(thirdPartyDTO);
         MvcResult mvcResult = mockMvc.perform(put("/third-party/charge").header("hashKey","1224df").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden()).andReturn();
         System.out.println(mvcResult.getResolvedException().toString());
@@ -65,7 +65,7 @@ public class ThirdPartyControllerTest {
     @Test
     @DisplayName("Third Party chargeMoney throws exception")
     void chargeMoney_throws_exception2() throws Exception {
-        ThirdPartyDTO thirdPartyDTO = new ThirdPartyDTO(4L, 6L, BigDecimal.valueOf(10L), Integer.parseInt("1234"));
+        ThirdPartyDTO thirdPartyDTO = new ThirdPartyDTO(4L, "increase", BigDecimal.valueOf(10L), Integer.parseInt("1234"));
         String body = objectMapper.writeValueAsString(thirdPartyDTO);
         MvcResult mvcResult = mockMvc.perform(put("/third-party/charge").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest()).andReturn();
         Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("Required request header 'hashKey' for method parameter type String is not present"));

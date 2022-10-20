@@ -16,9 +16,9 @@ public interface AdminControllerInterface {
     Account changeStatusAccount(@RequestBody AccountStatusDTO accountStatusDTO);
     Account createNewUserAccount(@RequestBody AccountHolderDTO accountHolderDTO);
     List<User> getAllUsers();
-    String deleteAccount(@RequestBody Long id);
+    void deleteAccount(@RequestBody Long id);
     Account createNewAccountByUser(@RequestBody CreateAccountDTO createAccountDTO);
-    String addSecondaryOwner(@RequestBody AddSecondOwnerDTO addSecondOwnerDTO);
+    void addSecondaryOwner(@RequestBody AddSecondOwnerDTO addSecondOwnerDTO);
     List<Account> getAllAccounts();
 
     ThirdPartyUser createThirdPartyUser(@RequestBody ThirdPartyUser thirdPartyUser);

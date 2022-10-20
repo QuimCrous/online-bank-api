@@ -18,6 +18,6 @@ public class ThirdPartyUserController implements ThirdPartyUserControllerInterfa
     @PutMapping("/third-party/charge")
     @ResponseStatus(HttpStatus.OK)
     public Money chargeMoney(@RequestHeader String hashKey, @RequestBody ThirdPartyDTO thirdPartyDTO){
-        return thirdPartyUserServiceInterface.transferMoneyByAccountType(hashKey, thirdPartyDTO.getOwnId(), thirdPartyDTO.getSecretKey(), thirdPartyDTO.getOtherId(), thirdPartyDTO.getAmount());
+        return thirdPartyUserServiceInterface.transferMoney(hashKey, thirdPartyDTO.getOwnId(), thirdPartyDTO.getSecretKey(), thirdPartyDTO.getAmount(), thirdPartyDTO.getTransferType());
     }/*test done*/
 }

@@ -19,7 +19,7 @@ I've used two embedables: the Money class(given by the project) and the Address 
 A package containing all the repositories of all model classes.
 
 ### Security
-This package contains the CustomUserDetails and the SecurityConfiguration classes used for security(Login accounts).
+This package contains the CustomUserDetails and the SecurityConfiguration classes used for security(Login accounts). 
 
 ### Service
 This one contains all the services and interfaces relative to the models. In the AccountHolderService, AdminService and ThirdPartyUserService where are the methods with the logic needed to make functional the Api.
@@ -65,3 +65,25 @@ There I have three classes where I tested the different methods if they work cor
     - checkFraud. This one is a sub-method used to detect fraud when someone is trying to make more than one transfer in less than a second.
     - checkStrangeAmount. The sub-method search in the transaction history to check if the amount of the transfer is more than 150% bigger than the historical max transfer.
     - checkUserName. Another sub-method used to check if the user is the owner of the account.
+
+- Admin Service methods:
+    - modifyBalance. This method allows the admin to modify (increase or decrease) the amount Balance of an account.
+    - changeStatusAccount. This one is used to change the account's status.
+    - getAllUsers. This display a list of all registered users.
+    - deleteAccount. This one is to delete an account.
+    - addSecondaryOwner. The method allows to add a secondary owner to an account.
+    - createNewAccount. This one allows the admin to create a new user linked to a new account. It also allows to choose between the different account types that exist and if it's a checking account it switches between student and checking depending on the user's age. 
+    - getAllAccounts. In this method is displayed a list of all accounts of the all users.
+    - createThirdPartyUser. That is used to create a third party user with a personal hashed key.
+    - addPassword. This method allows the admin to change the password of the user (not tested because I don't know if it's usefully).
+
+- Third Party User methods:
+    - transferMoneyByAccountType. It's the same method as the one in the account holder service but it also asks to insert the hashed key in the headers to confirm the third party user identity.
+
+## Use-Case & Class Diagram
+
+![img.png](img.png)
+
+![img_1.png](img_1.png)
+
+

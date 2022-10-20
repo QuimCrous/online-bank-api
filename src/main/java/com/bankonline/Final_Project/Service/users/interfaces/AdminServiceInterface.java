@@ -17,9 +17,9 @@ public interface AdminServiceInterface {
     Account changeStatusAccount(Long accountId, String status);
     Account createNewAccount(AccountHolderDTO accountHolderDTO);
     List<User> getAllUsers();
-    String deleteAccount(Long id);
+    void deleteAccount(Long id);
     Account createNewAccountByUser(CreateAccountDTO createAccountDTO);
-    String addSecondaryOwner(Long secondId, Long accountId);
+    void addSecondaryOwner(Long secondId, Long accountId);
     List<Account> getAllAccounts();
     ThirdPartyUser createThirdPartyUser(String name, String hashedKey);
     AccountHolder addPassword(Long userId, String password);

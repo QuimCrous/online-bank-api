@@ -45,8 +45,8 @@ public class AdminController implements AdminControllerInterface {
 
     @DeleteMapping("/admin/delete-account")
     @ResponseStatus(HttpStatus.OK)
-    public String deleteAccount(@RequestBody Long id){
-        return adminServiceInterface.deleteAccount(id);
+    public void deleteAccount(@RequestBody Long id){
+         adminServiceInterface.deleteAccount(id);
     }/*test done*/
 
     @PostMapping("/admin/create-new-account-by-user")
@@ -56,8 +56,8 @@ public class AdminController implements AdminControllerInterface {
     }/*test done*/
     @PutMapping("/admin/add-second-owner")
     @ResponseStatus(HttpStatus.OK)
-    public String addSecondaryOwner(@RequestBody AddSecondOwnerDTO addSecondOwnerDTO){
-        return adminServiceInterface.addSecondaryOwner(addSecondOwnerDTO.getAccountHolderId(), addSecondOwnerDTO.getAccountId());
+    public void addSecondaryOwner(@RequestBody AddSecondOwnerDTO addSecondOwnerDTO){
+        adminServiceInterface.addSecondaryOwner(addSecondOwnerDTO.getAccountHolderId(), addSecondOwnerDTO.getAccountId());
     }/*test done*/
     @GetMapping("/admin/get-all-accounts")
     public List<Account> getAllAccounts(){

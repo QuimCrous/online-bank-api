@@ -30,15 +30,16 @@ public class ThirdPartyUserService implements ThirdPartyUserServiceInterface {
     @Autowired
     ThirdPartyUserRepository thirdPartyUserRepository;
 
-    public Money transferMoneyByAccountType(String hashKey, Long ownId, Integer secretKey, Long otherId, BigDecimal amount){
+
+    public Money transferMoney(String hashKey, Long ownId, Integer secretKey, BigDecimal amount, String transferType){
         if (!thirdPartyUserRepository.findByHashedKey(hashKey).isPresent()) throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Incorrect Hashed Key");
         if (!accountRepository.findById(ownId).get().getSecretKey().equals(secretKey)) throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Incorrect Secret Key");
-        if (savingAccountRepository.findById(ownId).isPresent()){
-            return accountHolderService.transferSavingAccount(ownId, otherId, amount);
-        } else if (checkingAccountRepository.findById(ownId).isPresent()) {
-            return accountHolderService.transferCheckingAccount(ownId, otherId, amount);
+        Account account = accountRepository.findById(ownId).get();
+        if (transferType.equals("cobro")){
+            account.setBalance(account.getBalance().decreaseAmount(amount));
         }else {
-            return accountHolderService.transferMoney(ownId, otherId,amount);
+            account.setBalance(account.getBalance().increaseAmount(amount));
         }
+        return new Money(amount);
     }
 }
