@@ -75,6 +75,7 @@ public class AdminControllerTest {
         AccountHolderDTO accountHolderDTO = new AccountHolderDTO("Pablo","mail@test.com","123456789", LocalDate.of(1987,04,05),"savingsaccount",BigDecimal.valueOf(1500L),BigDecimal.valueOf(1500L),BigDecimal.valueOf(0.15),"patata",1234);
         String body = objectMapper.writeValueAsString(accountHolderDTO);
         MvcResult mvcResult = mockMvc.perform(post("/admin/create-new-user-account").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn();
+        Assertions.assertTrue(mvcResult.getResponse().getContentAsString().contains("Pablo"));
     }
 
     @Test

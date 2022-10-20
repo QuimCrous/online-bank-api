@@ -69,7 +69,7 @@ public class AccountHolderControllerTest {
     void getBalance_throws_Not_Found() throws Exception {
         String body = objectMapper.writeValueAsString(90L);
         MvcResult mvcResult = mockMvc.perform(get("/account-holder/get-balance").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound()).andReturn();
-        Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("account"));
+        Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("The account doesn't exist."));
     }
 
     @Test
@@ -138,6 +138,7 @@ public class AccountHolderControllerTest {
         AccHolderTransferDTO accHolderTransferDTO = new AccHolderTransferDTO(7L,7L,BigDecimal.valueOf(10L));
         String body = objectMapper.writeValueAsString(accHolderTransferDTO);
         MvcResult mvcResult = mockMvc.perform(put("/account-holder/transfer").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotAcceptable()).andReturn();
+        Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("The account is FROZEN"));
     }
 
     @Test
@@ -147,5 +148,6 @@ public class AccountHolderControllerTest {
         AccHolderTransferDTO accHolderTransferDTO = new AccHolderTransferDTO(8L,7L,BigDecimal.valueOf(1000L));
         String body = objectMapper.writeValueAsString(accHolderTransferDTO);
         MvcResult mvcResult = mockMvc.perform(put("/account-holder/transfer").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden()).andReturn();
+        Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("Strange import amount, proceed to freeze the account"));
     }
 }
