@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -18,6 +19,7 @@ public class SavingsAccount extends Account{
     private BigDecimal minimumBalance = BigDecimal.valueOf(1000L);
     @Digits(integer = 1,fraction = 4)
     @DecimalMax(value = "0.5000")
+    @NotNull
     private BigDecimal interestRate = BigDecimal.valueOf(0.0025);
     private LocalDate lastInterestRate;
 

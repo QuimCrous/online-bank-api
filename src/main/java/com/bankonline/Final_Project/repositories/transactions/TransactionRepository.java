@@ -12,8 +12,8 @@ import java.util.Optional;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     @Query(value = "SELECT max(time) FROM transaction AS trans WHERE trans.account_id = ?1",nativeQuery = true)
-    Optional<LocalDateTime> findByUserIdLast(Long userId);
+    Optional<LocalDateTime> findByUserIdLastTransaction(Long userId);
 
     @Query(value = "SELECT max(amount) from transaction as trans where trans.account_id = ?1",nativeQuery = true)
-    Optional<BigDecimal> max(Long countID);
+    Optional<BigDecimal> maxAmountTransactionHistory(Long countID);
 }

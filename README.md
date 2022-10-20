@@ -1,11 +1,11 @@
 # Online-bank-Api
 
-#### This is my final project from the Ironhack bootcamp. It's a RESTapi of a Online Bank Api done with spring using some dependencies as Java dev tools, Secutity, Jdbc, Jpa, Web, MySQL, lombock, validation and jackson. I didn't put many comments in my code, I hope that you can get all missing information here in the readme.
+#### This is my final project from the IronHack bootcamp. It's a RESTapi of Online Bank Api done with spring using some dependencies as Java dev tools, Security, Jdbc, Jpa, Web, MySQL, Lombock, validation and jackson. I didn't put many comments in my code to keep it clean hoping you can get all missing information here in the readme.
 
 ### Models
 I've made three packages with different classes that represents:
 
-- Package accounts: including an abstract parent class called Account with some common properties of all kind of accounts. Also there are a model for: Checking Account, Credit Card, Saving Account and Student Checking Account.
+- Package accounts: including an abstract parent class called Account with some common properties of all kind of accounts. Also, there are a model for: Checking Account, Credit Card, Saving Account and Student Checking Account.
 - Package users: including an abstract parent class called User and its three child class Admin, Account Holder and Admin. It includes a model of Role( used for security purpose).
 - Package transaction: a simple model that saves the information of all transactions made for the AccountHolders and Third Party.
 
@@ -25,7 +25,7 @@ This package contains the CustomUserDetails and the SecurityConfiguration classe
 This one contains all the services and interfaces relative to the models. In the AccountHolderService, AdminService and ThirdPartyUserService where are the methods with the logic needed to make functional the Api.
 
 ### Controllers
-The controllers packages contains the different controllers used to connect the methods done in the services with an Url so we can interact with the Api using a browser(or other apps that can help us with that interaction).
+The controllers packages contains the different controllers used to connect the methods done in the services with an Url, so we can interact with the Api using a browser(or other apps that can help us with that interaction).
 
 ### Test
 There I have three classes where I tested the different methods if they work correctly and if they throw the expected errors. 
@@ -78,7 +78,7 @@ There I have three classes where I tested the different methods if they work cor
     - addPassword. This method allows the admin to change the password of the user (not tested because I don't know if it's usefully).
 
 - Third Party User methods:
-    - transferMoneyByAccountType. It's the same method as the one in the account holder service but it also asks to insert the hashed key in the headers to confirm the third party user identity.
+    - transferMoneyByAccountType. It's the same method as the one in the account holder service, but it also asks to insert the hashed key in the headers to confirm the third party user identity.
 
 ## Use-Case & Class Diagram
 
@@ -86,4 +86,9 @@ There I have three classes where I tested the different methods if they work cor
 
 ![img_1.png](img_1.png)
 
+## bank-api.postman_collection.json
+- There is a list of all operations I've made in Postman to test that the authentication and all url worked correctly.
 
+### Credits
+
+Joaquim Crous Mayné - joaquimcrous@gmail.com

@@ -74,7 +74,6 @@ public class AdminService implements AdminServiceInterface {
 
     public void deleteAccount(Long id){
         Account account = accountRepository.findById(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Incorrect Account id"));
-        String response = "The account with "+ account.getId() + " id has been deleted.";
         accountRepository.delete(account);
     }
     public void addSecondaryOwner(Long secondId, Long accountId){
@@ -88,13 +87,12 @@ public class AdminService implements AdminServiceInterface {
         accountHolder.setPassword(passwordEncoder.encode(accountHolderDTO.getPassword()));
         userRepository.save(accountHolder);
         roleRepository.save(new Role("USER", accountHolder));
-        System.out.println(accountHolderDTO.getAccountType());
         return switch (accountHolderDTO.getAccountType()) {
             case "savingsaccount" ->
-                    createSavingAccount(accountHolderDTO.getInitialBalance(), accountHolder, accountHolderDTO.getMinimumBalance(), accountHolderDTO.getInterestRate());
+                    createSavingAccount(accountHolderDTO.getInitialBalance(), accountHolder, accountHolderDTO.getMinimumBalance(), accountHolderDTO.getInterestRate(), accountHolderDTO.getSecretKey());
             case "creditcard" ->
-                    createCreditCard(accountHolder, accountHolderDTO.getMinimumBalance(), accountHolderDTO.getInterestRate());
-            case "checkingaccount" -> createCheckingAccount(accountHolderDTO.getInitialBalance(), accountHolder);
+                    createCreditCard(accountHolder, accountHolderDTO.getMinimumBalance(), accountHolderDTO.getInterestRate(), accountHolderDTO.getSecretKey());
+            case "checkingaccount" -> createCheckingAccount(accountHolderDTO.getInitialBalance(), accountHolder, accountHolderDTO.getSecretKey());
             default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect Account Type");
         };
 
@@ -104,42 +102,45 @@ public class AdminService implements AdminServiceInterface {
         AccountHolder accountHolder = accountHolderRepository.findById(createAccountDTO.getId()).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"The id is incorrect."));
         return switch (createAccountDTO.getAccountType()) {
             case "savingsaccount" ->
-                    createSavingAccount(createAccountDTO.getInitialBalance(), accountHolder, createAccountDTO.getMinimumBalance(), createAccountDTO.getInterestRate());
+                    createSavingAccount(createAccountDTO.getInitialBalance(), accountHolder, createAccountDTO.getMinimumBalance(), createAccountDTO.getInterestRate(), createAccountDTO.getSecretKey());
             case "creditcard" ->
-                    createCreditCard(accountHolder, createAccountDTO.getMinimumBalance(), createAccountDTO.getInterestRate());
-            case "checkingaccount" -> createCheckingAccount(createAccountDTO.getInitialBalance(), accountHolder);
+                    createCreditCard(accountHolder, createAccountDTO.getMinimumBalance(), createAccountDTO.getInterestRate(), createAccountDTO.getSecretKey());
+            case "checkingaccount" -> createCheckingAccount(createAccountDTO.getInitialBalance(), accountHolder, createAccountDTO.getSecretKey());
             default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect Account Type");
         };
 
     }
 
 
-    public Account createSavingAccount(BigDecimal initialBalance, AccountHolder accountHolder, BigDecimal minimumBalance, BigDecimal interestRate){
+    public Account createSavingAccount(BigDecimal initialBalance, AccountHolder accountHolder, BigDecimal minimumBalance, BigDecimal interestRate, Integer secretKey){
         SavingsAccount account = new SavingsAccount();
         account.setPrimaryOwner(accountHolder);
         account.setBalance(initialBalance);
         account.setMinimumBalance(minimumBalance);
         account.setInterestRate(interestRate);
+        account.setSecretKey(secretKey);
         account.setCreationDate(LocalDate.now());
         account.setLastInterestRate(LocalDate.now());
         return savingAccountRepository.save(account);
     }
-    public Account createCreditCard(AccountHolder accountHolder, BigDecimal minimumBalance, BigDecimal interestRate){
+    public Account createCreditCard(AccountHolder accountHolder, BigDecimal minimumBalance, BigDecimal interestRate, Integer secretKey){
         CreditCard card = new CreditCard();
         card.setPrimaryOwner(accountHolder);
         card.setCreditLimit(minimumBalance);
         card.setBalance(minimumBalance);
         card.setInterestRate(interestRate);
+        card.setSecretKey(secretKey);
         card.setCreationDate(LocalDate.now());
         card.setLastInterestDay(LocalDate.now());
         return creditCardRepository.save(card);
     }
 
-    public Account createCheckingAccount(BigDecimal initialBalance, AccountHolder accountHolder){
+    public Account createCheckingAccount(BigDecimal initialBalance, AccountHolder accountHolder, Integer secretKey){
         if (Period.between(accountHolder.getBirthDate(), LocalDate.now()).getYears() >= 24){
             CheckingAccount account1 = new CheckingAccount();
             account1.setPrimaryOwner(accountHolder);
             account1.setBalance(initialBalance);
+            account1.setSecretKey(secretKey);
             account1.setCreationDate(LocalDate.now());
             account1.setLastInterestDay(LocalDate.now());
             return checkingAccountRepository.save(account1);
@@ -148,6 +149,7 @@ public class AdminService implements AdminServiceInterface {
             account1.setPrimaryOwner(accountHolder);
             account1.setCreationDate(LocalDate.now());
             account1.setBalance(initialBalance);
+            account1.setSecretKey(secretKey);
             return studentCheckingAccountRepository.save(account1);
         }
     }

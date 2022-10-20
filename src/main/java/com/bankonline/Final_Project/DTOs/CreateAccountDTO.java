@@ -16,14 +16,18 @@ public class CreateAccountDTO {
     @NotNull
     private BigDecimal minimumBalance;
     @NotNull
+    @NotEmpty
     private BigDecimal interestRate;
 
-    public CreateAccountDTO(Long id, String accountType, BigDecimal initialBalance, BigDecimal minimumBalance, BigDecimal interestRate) {
+    private Integer secretKey;
+
+    public CreateAccountDTO(Long id, String accountType, BigDecimal initialBalance, BigDecimal minimumBalance, BigDecimal interestRate, Integer secretKey) {
         this.id = id;
         this.accountType = accountType;
         this.initialBalance = initialBalance;
         this.minimumBalance = minimumBalance;
         this.interestRate = interestRate;
+        this.secretKey = secretKey;
     }
 
     public Long getId() {
@@ -64,5 +68,13 @@ public class CreateAccountDTO {
 
     public void setInterestRate(BigDecimal interestRate) {
         this.interestRate = interestRate;
+    }
+
+    public Integer getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(Integer secretKey) {
+        this.secretKey = secretKey;
     }
 }

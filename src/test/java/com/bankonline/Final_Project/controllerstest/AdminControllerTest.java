@@ -72,7 +72,7 @@ public class AdminControllerTest {
     @Test
     @DisplayName("what")
     void createNewUserAccount_works_ok() throws Exception {
-        AccountHolderDTO accountHolderDTO = new AccountHolderDTO("Pablo","mail@test.com","123456789", LocalDate.of(1987,04,05),"savingsaccount",BigDecimal.valueOf(1500L),BigDecimal.valueOf(1500L),BigDecimal.valueOf(0.15),"patata");
+        AccountHolderDTO accountHolderDTO = new AccountHolderDTO("Pablo","mail@test.com","123456789", LocalDate.of(1987,04,05),"savingsaccount",BigDecimal.valueOf(1500L),BigDecimal.valueOf(1500L),BigDecimal.valueOf(0.15),"patata",1234);
         String body = objectMapper.writeValueAsString(accountHolderDTO);
         MvcResult mvcResult = mockMvc.perform(post("/admin/create-new-user-account").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn();
     }
@@ -80,7 +80,7 @@ public class AdminControllerTest {
     @Test
     @DisplayName("Admin create new account by user works ok")
     void createNewAccountByUser_works_ok() throws Exception {
-        CreateAccountDTO createAccountDTO = new CreateAccountDTO(2L,"creditcard",BigDecimal.valueOf(500L),BigDecimal.valueOf(500L),BigDecimal.valueOf(0.15));
+        CreateAccountDTO createAccountDTO = new CreateAccountDTO(2L,"creditcard",BigDecimal.valueOf(500L),BigDecimal.valueOf(500L),BigDecimal.valueOf(0.15),5547);
         String body = objectMapper.writeValueAsString(createAccountDTO);
         MvcResult mvcResult = mockMvc.perform(post("/admin/create-new-account-by-user").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn();
         Assertions.assertEquals(5L,accountRepository.findById(8L).get().getPrimaryOwner().getUserId());

@@ -68,6 +68,7 @@ public class AccountHolderService implements AccountHolderServiceInterface {
         if (ownAccount.getBalance().getAmount().compareTo(ownAccount.getMinimumBalance()) < 0){
             ownAccount.setBalance((ownAccount.getBalance().decreaseAmount(ownAccount.getPenaltyFee())));
         }
+        ownAccount.checkInterestRate();
         Transaction transaction = new Transaction(ownId,ownAccount,otherId,amount, LocalDateTime.now(),"savings");
         transactionRepository.save(transaction);
         accountRepository.saveAll(List.of(ownAccount, otherAccount));
@@ -84,6 +85,7 @@ public class AccountHolderService implements AccountHolderServiceInterface {
         if (ownAccount.getBalance().getAmount().compareTo(ownAccount.getMinimumBalance().getAmount()) < 0){
             ownAccount.setBalance((ownAccount.getBalance().decreaseAmount(ownAccount.getPenaltyFee())));
         }
+        ownAccount.checkMonthlyMaintenanceFee();
         Transaction transaction = new Transaction(ownId,ownAccount,otherId,amount, LocalDateTime.now(),"checking");
         transactionRepository.save(transaction);
         accountRepository.saveAll(List.of(ownAccount, otherAccount));
@@ -96,6 +98,7 @@ public class AccountHolderService implements AccountHolderServiceInterface {
         checkStrangeAmount(ownId, amount);
         Account otherAccount = accountRepository.findById(otherId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The receptor account Id doesn't exist"));
         if (ownAccount.getBalance().getAmount().compareTo(amount) < 0) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"Not enough money to do the transfer");
+        if (ownAccount instanceof CreditCard) ((CreditCard) ownAccount).checkMonthlyInterestRate();
         ownAccount.setBalance((ownAccount.getBalance().decreaseAmount(amount)));
         otherAccount.setBalance((otherAccount.getBalance().increaseAmount(amount)));
         Transaction transaction = new Transaction(ownId,ownAccount,otherId,amount, LocalDateTime.now(),"transfer");
@@ -170,8 +173,8 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     }
 
     public void checkFraud(Long ownId) {
-        if (transactionRepository.findByUserIdLast(ownId).isPresent()){
-            if (transactionRepository.findByUserIdLast(ownId).get().until(LocalDateTime.now(), ChronoUnit.MILLIS) < 1000) {
+        if (transactionRepository.findByUserIdLastTransaction(ownId).isPresent()){
+            if (transactionRepository.findByUserIdLastTransaction(ownId).get().until(LocalDateTime.now(), ChronoUnit.MILLIS) < 1000) {
                 Account account = accountRepository.findById(ownId).get();
                 account.setStatus(Status.FROZEN);
                 accountRepository.save(account);
@@ -191,8 +194,8 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     }
 
     public void checkStrangeAmount(Long accountId, BigDecimal bigDecimal2){
-        if (transactionRepository.max(accountId).isPresent()){
-            BigDecimal bigDecimal = transactionRepository.max(accountId).get();
+        if (transactionRepository.maxAmountTransactionHistory(accountId).isPresent()){
+            BigDecimal bigDecimal = transactionRepository.maxAmountTransactionHistory(accountId).get();
             if (bigDecimal.multiply(BigDecimal.valueOf(1.5)).compareTo(bigDecimal2) < 0){
                     Account account = accountRepository.findById(accountId).get();
                     account.setStatus(Status.FROZEN);

@@ -1,10 +1,14 @@
 package com.bankonline.Final_Project.models.accounts;
 import com.bankonline.Final_Project.embedables.Money;
 import com.bankonline.Final_Project.enums.Status;
+import com.bankonline.Final_Project.models.transactions.Transaction;
 import com.bankonline.Final_Project.models.users.AccountHolder;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Entity
@@ -34,6 +38,10 @@ public abstract class Account {
     private final Money penaltyFee = new Money(BigDecimal.valueOf(40L));
 
     private Integer secretKey;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @JsonIgnore
+    public List<Transaction> transactionList;
 
     public Account() {
     }

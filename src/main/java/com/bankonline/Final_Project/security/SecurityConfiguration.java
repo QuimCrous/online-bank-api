@@ -44,8 +44,8 @@ public class SecurityConfiguration {
                 .mvcMatchers(HttpMethod.GET,"/account-holder/**").hasRole("USER")
                 .mvcMatchers(HttpMethod.PATCH,"/account-holder/**").hasRole("USER")
                 .mvcMatchers(HttpMethod.POST,"/account-holder/**").hasRole("USER")
-                .mvcMatchers(HttpMethod.PUT,"/account-holder/**").hasRole("USER")
-                .anyRequest().permitAll();
+                .mvcMatchers(HttpMethod.PUT,"/account-holder/**").hasRole("USER");
+                //.anyRequest().permitAll();
 
         httpSecurity.csrf().disable();
 

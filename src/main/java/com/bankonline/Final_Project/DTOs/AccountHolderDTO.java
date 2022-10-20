@@ -34,9 +34,10 @@ public class AccountHolderDTO {
     @NotEmpty
     @NotBlank
     private String password;
+    private Integer secretKey;
 
 
-    public AccountHolderDTO(String name, String mail, String phone, @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate birthDate, String accountType, BigDecimal initialBalance, BigDecimal minimumBalance, BigDecimal interestRate, String password) {
+    public AccountHolderDTO(String name, String mail, String phone, LocalDate birthDate, String accountType, BigDecimal initialBalance, BigDecimal minimumBalance, BigDecimal interestRate, String password, Integer secretKey) {
         this.name = name;
         this.mail = mail;
         this.phone = phone;
@@ -46,8 +47,8 @@ public class AccountHolderDTO {
         this.minimumBalance = minimumBalance;
         this.interestRate = interestRate;
         this.password = password;
+        this.secretKey = secretKey;
     }
-
 
     public String getAccountType() {
         return accountType;
@@ -119,5 +120,13 @@ public class AccountHolderDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Integer getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(Integer secretKey) {
+        this.secretKey = secretKey;
     }
 }
