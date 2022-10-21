@@ -75,7 +75,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"ownId\": 1,\r\n    \"otherId\": 3,\r\n    \"amount\": 10\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -83,7 +83,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8082/account-holder",
+					"raw": "http://localhost:8082/account-holder?id=2",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -91,6 +91,12 @@
 					"port": "8082",
 					"path": [
 						"account-holder"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "2"
+						}
 					]
 				}
 			},
@@ -165,7 +171,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "1",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -173,7 +179,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8082/account-holder/get-balance",
+					"raw": "http://localhost:8082/account-holder/get-balance?id=1",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -182,6 +188,12 @@
 					"path": [
 						"account-holder",
 						"get-balance"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
+						}
 					]
 				}
 			},
