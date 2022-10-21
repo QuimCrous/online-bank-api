@@ -18,12 +18,7 @@ import java.math.BigDecimal;
 @Service
 public class ThirdPartyUserService implements ThirdPartyUserServiceInterface {
 
-    @Autowired
-    CheckingAccountRepository checkingAccountRepository;
-    @Autowired
-    SavingAccountRepository savingAccountRepository;
-    @Autowired
-    AccountHolderService accountHolderService;
+
     @Autowired
     AccountRepository accountRepository;
 

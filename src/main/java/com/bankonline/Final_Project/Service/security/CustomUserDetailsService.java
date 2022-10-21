@@ -18,7 +18,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (!userRepository.findByName(username).isPresent()) {
             throw new UsernameNotFoundException("User does not exist");
         }
-        //return new CustomUserDetails(userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User does not exist")));
         return new CustomUserDetails(userRepository.findByName(username).get());
     }
 }
