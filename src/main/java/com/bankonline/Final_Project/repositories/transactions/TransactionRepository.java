@@ -16,4 +16,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     @Query(value = "SELECT max(amount) from transaction as trans where trans.account_id = ?1",nativeQuery = true)
     Optional<BigDecimal> maxAmountTransactionHistory(Long countID);
+
+//    SELECT max(yas) from (select sum(amount) as yas from bankapi.transaction as trans where trans.account_id = 8  group by trans.time) as prova;
 }
