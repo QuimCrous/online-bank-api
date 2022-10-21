@@ -49,6 +49,7 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     public Money transferMoneyByAccountType(String name, Long ownId, Long otherId, BigDecimal amount){
         checkUserName(name, ownId);
         checkFraud(ownId);
+        checkStrangeAmount(ownId, amount);
         if (savingAccountRepository.findById(ownId).isPresent()){
             return transferSavingAccount(ownId, otherId, amount);
         } else if (checkingAccountRepository.findById(ownId).isPresent()) {
@@ -60,7 +61,6 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     public Money transferSavingAccount(Long ownId, Long otherId, BigDecimal amount){
         SavingsAccount ownAccount = savingAccountRepository.findById(ownId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The owner account Id doesn't exist"));
         if (ownAccount.getStatus().equals(Status.FROZEN)) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"The account is FROZEN");
-        checkStrangeAmount(ownId, amount);
         Account otherAccount = accountRepository.findById(otherId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The receptor account Id doesn't exist"));
         if (ownAccount.getBalance().getAmount().compareTo(amount) < 0) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"Not enough money to do the transfer");
         ownAccount.setBalance((ownAccount.getBalance().decreaseAmount(amount)));
@@ -77,7 +77,6 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     public Money transferCheckingAccount(Long ownId, Long otherId, BigDecimal amount){
         CheckingAccount ownAccount = checkingAccountRepository.findById(ownId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The owner account Id doesn't exist"));
         if (ownAccount.getStatus().equals(Status.FROZEN)) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"The account is FROZEN");
-        checkStrangeAmount(ownId, amount);
         Account otherAccount = accountRepository.findById(otherId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The receptor account Id doesn't exist"));
         if (ownAccount.getBalance().getAmount().compareTo(amount) < 0) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"Not enough money to do the transfer");
         ownAccount.setBalance((ownAccount.getBalance().decreaseAmount(amount)));
@@ -95,7 +94,6 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     public Money transferMoney(Long ownId, Long otherId, BigDecimal amount){
         Account ownAccount = accountRepository.findById(ownId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The owner account Id doesn't exist"));
         if (ownAccount.getStatus().equals(Status.FROZEN)) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"The account is FROZEN");
-        checkStrangeAmount(ownId, amount);
         Account otherAccount = accountRepository.findById(otherId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The receptor account Id doesn't exist"));
         if (ownAccount.getBalance().getAmount().compareTo(amount) < 0) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"Not enough money to do the transfer");
         if (ownAccount instanceof CreditCard) ((CreditCard) ownAccount).checkMonthlyInterestRate();
