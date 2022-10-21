@@ -28,7 +28,7 @@ This one contains all the services and interfaces relative to the models. In the
 The controllers packages contains the different controllers used to connect the methods done in the services with an Url, so we can interact with the Api using a browser(or other apps that can help us with that interaction).
 
 ### Test
-There I have three classes where I tested the different methods if they work correctly and if they throw the expected errors. 
+There I have three classes where I tested the different methods if they work correctly and if they throw the expected errors. There I also have tested the security because I've had to add a validation in the tests that was needed to prove the user was in the database. 
 
 ### Others
 
