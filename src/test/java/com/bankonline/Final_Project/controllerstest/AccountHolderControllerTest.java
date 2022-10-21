@@ -58,8 +58,7 @@ public class AccountHolderControllerTest {
     void getBalance_works_ok() throws Exception {
         //Here I tested not only get the balance, but also tested the monthly maintenance fee is applied correctly
         Assertions.assertEquals(BigDecimal.valueOf(100000,2),accountRepository.findById(2L).get().getBalance().getAmount());
-        String body = objectMapper.writeValueAsString(2L);
-        MvcResult mvcResult = mockMvc.perform(get("/account-holder/get-balance").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
+        MvcResult mvcResult = mockMvc.perform(get("/account-holder/get-balance").param("id","2").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
         Assertions.assertEquals(BigDecimal.valueOf(59200,2),accountRepository.findById(2L).get().getBalance().getAmount());
     }
 
@@ -67,8 +66,7 @@ public class AccountHolderControllerTest {
     @WithMockUser("Aeris")
     @DisplayName("Account Holder getBalance throws exception")
     void getBalance_throws_Not_Found() throws Exception {
-        String body = objectMapper.writeValueAsString(90L);
-        MvcResult mvcResult = mockMvc.perform(get("/account-holder/get-balance").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound()).andReturn();
+        MvcResult mvcResult = mockMvc.perform(get("/account-holder/get-balance").param("id","90").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound()).andReturn();
         Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("The account doesn't exist."));
     }
 
@@ -103,8 +101,7 @@ public class AccountHolderControllerTest {
     @Test
     @DisplayName("Account Holder getAccounts works ok")
     void getAccounts_works_ok() throws Exception {
-        String body = objectMapper.writeValueAsString(2L);
-        MvcResult mvcResult = mockMvc.perform(get("/account-holder").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isAccepted()).andReturn();
+        MvcResult mvcResult = mockMvc.perform(get("/account-holder").param("id","2").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isAccepted()).andReturn();
         Assertions.assertTrue(mvcResult.getResponse().getContentAsString().contains("Tifa"));
     }
 

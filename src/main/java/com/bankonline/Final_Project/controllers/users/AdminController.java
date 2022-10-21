@@ -45,7 +45,7 @@ public class AdminController implements AdminControllerInterface {
 
     @DeleteMapping("/admin/delete-account")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteAccount(@RequestBody Long id){
+    public void deleteAccount(@RequestParam Long id){
          adminServiceInterface.deleteAccount(id);
     }/*test done*/
 

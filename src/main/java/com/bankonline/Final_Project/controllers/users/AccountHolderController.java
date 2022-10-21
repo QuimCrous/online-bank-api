@@ -28,7 +28,7 @@ public class AccountHolderController implements AccountHolderControllerInterface
     }/*test done*/
     @GetMapping("/account-holder")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public List<Account> getAccounts(@RequestBody Long id){
+    public List<Account> getAccounts(@RequestParam Long id){
         return accountHolderServiceInterface.getAccounts(id);
     }/*test done*/
 
@@ -53,7 +53,7 @@ public class AccountHolderController implements AccountHolderControllerInterface
 
 
     @GetMapping("/account-holder/get-balance")
-    public Money getBalance(@AuthenticationPrincipal UserDetails userDetails, @RequestBody Long id){
+    public Money getBalance(@AuthenticationPrincipal UserDetails userDetails, @RequestParam Long id){
         return accountHolderServiceInterface.getBalance(id, userDetails.getUsername());
     }/*test done*/
 }

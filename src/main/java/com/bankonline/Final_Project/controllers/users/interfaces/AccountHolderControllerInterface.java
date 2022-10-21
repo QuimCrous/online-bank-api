@@ -10,14 +10,15 @@ import com.bankonline.Final_Project.models.users.AccountHolder;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
 public interface AccountHolderControllerInterface {
     Money transferMoney(@AuthenticationPrincipal UserDetails userDetails, @RequestBody AccHolderTransferDTO accHolderTransferDTO);
-    List<Account> getAccounts(@RequestBody Long id);
+    List<Account> getAccounts(@RequestParam Long id);
 //    AccountHolder createAccountHolder(@RequestBody AccountHolderDTO accountHolderDTO);
     Address addPrimaryAddress(@RequestBody AddressDTO addressDTO);
     Address addMailingAddress(@RequestBody AddressDTO addressDTO);
-    Money getBalance( @AuthenticationPrincipal UserDetails userDetails, @RequestBody Long id);
+    Money getBalance( @AuthenticationPrincipal UserDetails userDetails, @RequestParam Long id);
 }

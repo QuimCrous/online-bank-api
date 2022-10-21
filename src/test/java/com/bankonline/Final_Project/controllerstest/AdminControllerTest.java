@@ -100,8 +100,7 @@ public class AdminControllerTest {
     @Test
     @DisplayName("Admin delete account works ok")
     void deleteAccount_works_ok() throws Exception {
-        String body = objectMapper.writeValueAsString(5);
-        MvcResult mvcResult = mockMvc.perform(delete("/admin/delete-account").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
+        MvcResult mvcResult = mockMvc.perform(delete("/admin/delete-account").param("id","5").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
         assertTrue(!accountRepository.existsById(5L));
     }
 
