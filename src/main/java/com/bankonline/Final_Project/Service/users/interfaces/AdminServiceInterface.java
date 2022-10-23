@@ -2,6 +2,7 @@ package com.bankonline.Final_Project.Service.users.interfaces;
 
 import com.bankonline.Final_Project.DTOs.AccountHolderDTO;
 import com.bankonline.Final_Project.DTOs.CreateAccountDTO;
+import com.bankonline.Final_Project.embedables.Money;
 import com.bankonline.Final_Project.models.accounts.Account;
 import com.bankonline.Final_Project.models.users.AccountHolder;
 import com.bankonline.Final_Project.models.users.Admin;
@@ -24,4 +25,5 @@ public interface AdminServiceInterface {
     ThirdPartyUser createThirdPartyUser(String name, String hashedKey);
     AccountHolder addPassword(Long userId, String password);
     Admin createAdmin(String name, String password);
+    Money getBalanceAccount(Long accountId);
 }

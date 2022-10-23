@@ -20,6 +20,7 @@ public abstract class Account {
     @Embedded
     private Money balance;
 
+    private Integer secretKey;
     @ManyToOne
     @JoinColumn(name = "primary_owner_user_id")
     private AccountHolder primaryOwner;
@@ -37,7 +38,6 @@ public abstract class Account {
     })
     private final Money penaltyFee = new Money(BigDecimal.valueOf(40L));
 
-    private Integer secretKey;
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     @JsonIgnore

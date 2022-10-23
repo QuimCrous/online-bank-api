@@ -1,6 +1,7 @@
 package com.bankonline.Final_Project.controllers.users.interfaces;
 
 import com.bankonline.Final_Project.DTOs.*;
+import com.bankonline.Final_Project.embedables.Money;
 import com.bankonline.Final_Project.models.accounts.Account;
 import com.bankonline.Final_Project.models.users.AccountHolder;
 import com.bankonline.Final_Project.models.users.Admin;
@@ -25,4 +26,5 @@ public interface AdminControllerInterface {
 
     AccountHolder addPassword(@RequestBody PasswordDTO passwordDTO);
     Admin createAdmin(@RequestBody AdminDTO adminDTO);
+    Money getBalanceAccount(@RequestParam Long id);
 }

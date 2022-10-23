@@ -30,10 +30,12 @@ public class ThirdPartyUserService implements ThirdPartyUserServiceInterface {
         if (!thirdPartyUserRepository.findByHashedKey(hashKey).isPresent()) throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Incorrect Hashed Key");
         if (!accountRepository.findById(ownId).get().getSecretKey().equals(secretKey)) throw new ResponseStatusException(HttpStatus.FORBIDDEN,"Incorrect Secret Key");
         Account account = accountRepository.findById(ownId).get();
-        if (transferType.equals("cobro")){
+        if (transferType.equals("charge")){
             account.setBalance(account.getBalance().decreaseAmount(amount));
-        }else {
+        } else if (transferType.equals("refund")) {
             account.setBalance(account.getBalance().increaseAmount(amount));
+        }else {
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"the transfer type is incorrect.");
         }
         return new Money(amount);
     }

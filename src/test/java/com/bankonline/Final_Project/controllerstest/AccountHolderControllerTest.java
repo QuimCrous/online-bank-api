@@ -64,10 +64,18 @@ public class AccountHolderControllerTest {
 
     @Test
     @WithMockUser("Aeris")
-    @DisplayName("Account Holder getBalance throws exception")
+    @DisplayName("Account Holder getBalance throws exception wrong accountId")
     void getBalance_throws_Not_Found() throws Exception {
         MvcResult mvcResult = mockMvc.perform(get("/account-holder/get-balance").param("id","90").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound()).andReturn();
         Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("The account doesn't exist."));
+    }
+
+    @Test
+    @WithMockUser("Aeris")
+    @DisplayName("Account Holder getBalance throws exception wrong Account Holder user")
+    void getBalance_throws_exception_wrong_accountHolder() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get("/account-holder/get-balance").param("id","3").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden()).andReturn();
+        Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("You are not owner of the account."));
     }
 
     @Test
@@ -78,6 +86,15 @@ public class AccountHolderControllerTest {
         String body = objectMapper.writeValueAsString(accHolderTransferDTO);
         MvcResult mvcResult = mockMvc.perform(put("/account-holder/transfer").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
         Assertions.assertEquals("{\"currency\":\"EUR\",\"amount\":950.00}",mvcResult.getResponse().getContentAsString());
+    }
+    @Test
+    @WithMockUser("Tifa")
+    @DisplayName("Account Holder transferMoney throws exception wrong Account Holder")
+    void transferMoney_throws_exception_wrong_accountHolder() throws Exception {
+        AccHolderTransferDTO accHolderTransferDTO = new AccHolderTransferDTO(3L,4L,BigDecimal.valueOf(10L));
+        String body = objectMapper.writeValueAsString(accHolderTransferDTO);
+        MvcResult mvcResult = mockMvc.perform(put("/account-holder/transfer").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden()).andReturn();
+        Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("You are not owner of the account."));
     }
     @Test
     @WithMockUser("Tifa")

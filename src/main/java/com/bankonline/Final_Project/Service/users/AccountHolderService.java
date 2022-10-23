@@ -11,14 +11,17 @@ import com.bankonline.Final_Project.models.accounts.CreditCard;
 import com.bankonline.Final_Project.models.accounts.SavingsAccount;
 import com.bankonline.Final_Project.models.transactions.Transaction;
 import com.bankonline.Final_Project.models.users.AccountHolder;
+import com.bankonline.Final_Project.models.users.Role;
 import com.bankonline.Final_Project.repositories.accounts.AccountRepository;
 import com.bankonline.Final_Project.repositories.accounts.CheckingAccountRepository;
 import com.bankonline.Final_Project.repositories.accounts.CreditCardRepository;
 import com.bankonline.Final_Project.repositories.accounts.SavingAccountRepository;
 import com.bankonline.Final_Project.repositories.transactions.TransactionRepository;
 import com.bankonline.Final_Project.repositories.users.AccountHolderRepository;
+import com.bankonline.Final_Project.repositories.users.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -45,6 +48,12 @@ public class AccountHolderService implements AccountHolderServiceInterface {
 
     @Autowired
     TransactionRepository transactionRepository;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    RoleRepository roleRepository;
 
     public Money transferMoneyByAccountType(String name, Long ownId, Long otherId, BigDecimal amount){
         checkUserName(name, ownId);
@@ -123,6 +132,7 @@ public class AccountHolderService implements AccountHolderServiceInterface {
             return getBalanceCreditCard(id);
         } else {
             Account account = accountRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The account doesn't exist."));
+            checkUserName(userName, id);
             return account.getBalance();
         }
 
@@ -150,8 +160,10 @@ public class AccountHolderService implements AccountHolderServiceInterface {
     }
 
     public AccountHolder createAccountHolder(AccountHolderDTO accountHolderDTO){
-        AccountHolder accountHolder = new AccountHolder(accountHolderDTO.getName(),accountHolderDTO.getMail(),accountHolderDTO.getPhone(),accountHolderDTO.getBirthDate());
-        return accountHolderRepository.save(accountHolder);
+        AccountHolder accountHolder = new AccountHolder(accountHolderDTO.getName(),passwordEncoder.encode(accountHolderDTO.getPassword()),accountHolderDTO.getMail(),accountHolderDTO.getPhone(),accountHolderDTO.getBirthDate());
+        accountHolderRepository.save(accountHolder);
+        roleRepository.save(new Role("USER", accountHolder));
+        return accountHolder;
     }
 
     public Address addPrimaryAddress(Long id, AddressDTO addressDTO){

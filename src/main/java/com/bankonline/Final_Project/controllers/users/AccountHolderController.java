@@ -33,11 +33,11 @@ public class AccountHolderController implements AccountHolderControllerInterface
     }/*test done*/
 
     //This method is for creating an Account Holder but in the last moment I only allow Admins to create Account Holders
-//    @PostMapping("/account-holder/create-user")
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public AccountHolder createAccountHolder(@RequestBody AccountHolderDTO accountHolderDTO){
-//        return accountHolderServiceInterface.createAccountHolder(accountHolderDTO);
-//    }
+    @PostMapping("/account-holder/create-user")
+    @ResponseStatus(HttpStatus.CREATED)
+    public AccountHolder createAccountHolder(@RequestBody AccountHolderDTO accountHolderDTO){
+        return accountHolderServiceInterface.createAccountHolder(accountHolderDTO);
+    }
 
     @PutMapping("/account-holder/add-primary-address")
     @ResponseStatus(HttpStatus.OK)

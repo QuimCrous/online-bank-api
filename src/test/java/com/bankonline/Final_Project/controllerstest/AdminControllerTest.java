@@ -4,6 +4,7 @@ import com.bankonline.Final_Project.DTOs.*;
 import com.bankonline.Final_Project.enums.Status;
 import com.bankonline.Final_Project.models.users.ThirdPartyUser;
 import com.bankonline.Final_Project.repositories.accounts.AccountRepository;
+import com.bankonline.Final_Project.repositories.accounts.StudentCheckingAccountRepository;
 import com.bankonline.Final_Project.repositories.users.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -36,6 +37,9 @@ public class AdminControllerTest {
     AccountRepository accountRepository;
 
     @Autowired
+    StudentCheckingAccountRepository studentCheckingAccountRepository;
+
+    @Autowired
     private WebApplicationContext webApplicationContext;
     private MockMvc mockMvc;
 
@@ -59,6 +63,15 @@ public class AdminControllerTest {
         MvcResult mvcResult = mockMvc.perform(patch("/admin/modify-balance").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isAccepted()).andReturn();
         Assertions.assertEquals(new BigDecimal("1010.00"),accountRepository.findById(1L).get().getBalance().getAmount());
     }
+    @Test
+    @DisplayName("Admin modify balance throws exception wrong account id")
+    void modifyBalance_throws_exception() throws Exception {
+        ModifyBalanceDTO modifyBalanceDTO = new ModifyBalanceDTO(100L,BigDecimal.valueOf(10L),"increase");
+        String body = objectMapper.writeValueAsString(modifyBalanceDTO);
+        MvcResult mvcResult = mockMvc.perform(patch("/admin/modify-balance").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound()).andReturn();
+        System.out.println(mvcResult.getResolvedException().toString());
+        Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("Incorrect Account id"));
+    }
 
     @Test
     @DisplayName("Admin change status works ok")
@@ -67,6 +80,24 @@ public class AdminControllerTest {
         String body = objectMapper.writeValueAsString(accountStatusDTO);
         MvcResult mvcResult = mockMvc.perform(patch("/admin/status").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isAccepted()).andReturn();
         Assertions.assertEquals(Status.FROZEN,accountRepository.findById(2L).get().getStatus());
+    }
+
+    @Test
+    @DisplayName("Admin change status throws exception wrong account id")
+    void changeStatusAccount_throws_exception_wrongId() throws Exception {
+        AccountStatusDTO accountStatusDTO = new AccountStatusDTO(500L,"FROZEN");
+        String body = objectMapper.writeValueAsString(accountStatusDTO);
+        MvcResult mvcResult = mockMvc.perform(patch("/admin/status").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound()).andReturn();
+        Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("Incorrect Account id"));
+    }
+
+    @Test
+    @DisplayName("Admin change status throws exception wrong status")
+    void changeStatusAccount_throws_exception_wrongStatus() throws Exception {
+        AccountStatusDTO accountStatusDTO = new AccountStatusDTO(2L,"frozen2");
+        String body = objectMapper.writeValueAsString(accountStatusDTO);
+        MvcResult mvcResult = mockMvc.perform(patch("/admin/status").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotAcceptable()).andReturn();
+        Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("Incorrect status."));
     }
 
     @Test
@@ -79,12 +110,37 @@ public class AdminControllerTest {
     }
 
     @Test
+    @DisplayName("Create new account holder and new account throws exception wrong accountType")
+    void createNewUserAccount_throws_exception_wrong_accountType() throws Exception {
+        AccountHolderDTO accountHolderDTO = new AccountHolderDTO("Pablo","mail@test.com","123456789", LocalDate.of(1987,04,05),"savingsaccountyouuu",BigDecimal.valueOf(1500L),BigDecimal.valueOf(1500L),BigDecimal.valueOf(0.15),"patata",1234);
+        String body = objectMapper.writeValueAsString(accountHolderDTO);
+        MvcResult mvcResult = mockMvc.perform(post("/admin/create-new-user-account").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest()).andReturn();
+        Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("Incorrect Account Type"));
+    }
+    @Test
     @DisplayName("Admin create new account by user works ok")
     void createNewAccountByUser_works_ok() throws Exception {
         CreateAccountDTO createAccountDTO = new CreateAccountDTO(2L,"creditcard",BigDecimal.valueOf(500L),BigDecimal.valueOf(500L),BigDecimal.valueOf(0.15),5547);
         String body = objectMapper.writeValueAsString(createAccountDTO);
         MvcResult mvcResult = mockMvc.perform(post("/admin/create-new-account-by-user").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn();
         Assertions.assertEquals(5L,accountRepository.findById(8L).get().getPrimaryOwner().getUserId());
+    }
+
+    @Test
+    @DisplayName("Admin create new account by user throws exception wrong account type")
+    void createNewAccountByUser_throws_exception_wrong_accountType() throws Exception {
+        CreateAccountDTO createAccountDTO = new CreateAccountDTO(2L,"mylonenlyness",BigDecimal.valueOf(500L),BigDecimal.valueOf(500L),BigDecimal.valueOf(0.15),5547);
+        String body = objectMapper.writeValueAsString(createAccountDTO);
+        MvcResult mvcResult = mockMvc.perform(post("/admin/create-new-account-by-user").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest()).andReturn();
+        Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("Incorrect Account Type"));
+    }
+    @Test
+    @DisplayName("Admin create new account by user throws exception wrong Account Holder id")
+    void createNewAccountByUser_throws_exception_wrong_accountHolderId() throws Exception {
+        CreateAccountDTO createAccountDTO = new CreateAccountDTO(500L,"creditcard",BigDecimal.valueOf(500L),BigDecimal.valueOf(500L),BigDecimal.valueOf(0.15),5547);
+        String body = objectMapper.writeValueAsString(createAccountDTO);
+        MvcResult mvcResult = mockMvc.perform(post("/admin/create-new-account-by-user").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound()).andReturn();
+        Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("The Account Holder id is incorrect."));
     }
 
     @Test
@@ -105,12 +161,37 @@ public class AdminControllerTest {
     }
 
     @Test
+    @DisplayName("Admin delete account throws exception wrong accountId")
+    void deleteAccount_throws_exception_wrongId() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(delete("/admin/delete-account").param("id","50").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound()).andReturn();
+        assertTrue(mvcResult.getResolvedException().toString().contains("Incorrect Account id"));
+    }
+
+    @Test
     @DisplayName("Admin add secondary owner works ok")
     void addSecondaryOwner() throws  Exception {
         AddSecondOwnerDTO addSecondOwnerDTO = new AddSecondOwnerDTO(1L,3L);
         String body = objectMapper.writeValueAsString(addSecondOwnerDTO);
         MvcResult mvcResult = mockMvc.perform(put("/admin/add-second-owner").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
         Assertions.assertEquals(3L,accountRepository.findById(1L).get().getSecondaryOwner().getUserId());
+    }
+
+    @Test
+    @DisplayName("Admin add secondary owner throws exception wrong accountId")
+    void addSecondaryOwner_throws_exception_wrongAccountId() throws  Exception {
+        AddSecondOwnerDTO addSecondOwnerDTO = new AddSecondOwnerDTO(50L,3L);
+        String body = objectMapper.writeValueAsString(addSecondOwnerDTO);
+        MvcResult mvcResult = mockMvc.perform(put("/admin/add-second-owner").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound()).andReturn();
+        Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("The account id is incorrect."));
+    }
+
+    @Test
+    @DisplayName("Admin add secondary owner throws exception wrong accountHolderId")
+    void addSecondaryOwner_throws_exception_wrongAccountHolderId() throws  Exception {
+        AddSecondOwnerDTO addSecondOwnerDTO = new AddSecondOwnerDTO(1L,50L);
+        String body = objectMapper.writeValueAsString(addSecondOwnerDTO);
+        MvcResult mvcResult = mockMvc.perform(put("/admin/add-second-owner").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound()).andReturn();
+        Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("The Account Holder id is incorrect."));
     }
 
     @Test
@@ -139,6 +220,30 @@ public class AdminControllerTest {
         MvcResult mvcResult = mockMvc.perform(post("/admin/create-admin").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn();
         System.out.println(mvcResult.getResponse().getContentAsString());
         Assertions.assertTrue(mvcResult.getResponse().getContentAsString().contains("RuPaul"));
+    }
+
+    @Test
+    @DisplayName("Admin create new account by user gets a Student Checking Account")
+    void createNewAccountByUser_works_ok_studentCheckingAccount() throws Exception {
+        CreateAccountDTO createAccountDTO = new CreateAccountDTO(8L,"checkingaccount",BigDecimal.valueOf(500L),BigDecimal.valueOf(500L),BigDecimal.valueOf(0.15),5547);
+        String body = objectMapper.writeValueAsString(createAccountDTO);
+        MvcResult mvcResult = mockMvc.perform(post("/admin/create-new-account-by-user").content(body).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn();
+        Assertions.assertTrue(!studentCheckingAccountRepository.findAll().isEmpty());
+
+    }
+
+    @Test
+    @DisplayName("getBalance works ok")
+    void getBalanceAccount_works_ok() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get("/admin/get-balance").param("id","1").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
+        Assertions.assertTrue(mvcResult.getResponse().getContentAsString().contains("\"currency\":\"EUR\""));
+    }
+
+    @Test
+    @DisplayName("getBalance throws exception wrong accountId")
+    void getBalance_throws_exception_wrong_id() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get("/admin/get-balance").param("id","50").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound()).andReturn();
+        Assertions.assertTrue(mvcResult.getResolvedException().toString().contains("The account Id doesn't exist."));
     }
 
 

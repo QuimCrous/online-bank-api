@@ -2,6 +2,7 @@ package com.bankonline.Final_Project.Service.users;
 import com.bankonline.Final_Project.DTOs.AccountHolderDTO;
 import com.bankonline.Final_Project.DTOs.CreateAccountDTO;
 import com.bankonline.Final_Project.Service.users.interfaces.AdminServiceInterface;
+import com.bankonline.Final_Project.embedables.Money;
 import com.bankonline.Final_Project.enums.Status;
 import com.bankonline.Final_Project.models.accounts.*;
 import com.bankonline.Final_Project.models.users.*;
@@ -63,6 +64,7 @@ public class AdminService implements AdminServiceInterface {
 
     public Account changeStatusAccount(Long accountId, String status){
         Account account = accountRepository.findById(accountId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Incorrect Account id"));
+        if (!status.equals("FROZEN") && !status.equals("ACTIVE")) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"Incorrect status.");
         Status status1 = Status.valueOf(status);
         account.setStatus(status1);
         return accountRepository.save(account);
@@ -77,29 +79,32 @@ public class AdminService implements AdminServiceInterface {
         accountRepository.delete(account);
     }
     public void addSecondaryOwner(Long secondId, Long accountId){
-        AccountHolder accountHolder2 = accountHolderRepository.findById(secondId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The id is incorrect."));
-        Account account = accountRepository.findById(accountId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The id is incorrect."));
+        AccountHolder accountHolder2 = accountHolderRepository.findById(secondId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The Account Holder id is incorrect."));
+        Account account = accountRepository.findById(accountId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"The account id is incorrect."));
         account.setSecondaryOwner(accountHolder2);
         accountRepository.save(account);
     }
     public Account createNewAccount(AccountHolderDTO accountHolderDTO){
-        AccountHolder accountHolder = new AccountHolder(accountHolderDTO.getName(),accountHolderDTO.getMail(),accountHolderDTO.getPhone(),accountHolderDTO.getBirthDate());
-        accountHolder.setPassword(passwordEncoder.encode(accountHolderDTO.getPassword()));
+        AccountHolder accountHolder = new AccountHolder(accountHolderDTO.getName(),passwordEncoder.encode(accountHolderDTO.getPassword()), accountHolderDTO.getMail(),accountHolderDTO.getPhone(),accountHolderDTO.getBirthDate());
         userRepository.save(accountHolder);
-        roleRepository.save(new Role("USER", accountHolder));
+        Role role = roleRepository.save(new Role("USER", accountHolder));
         return switch (accountHolderDTO.getAccountType()) {
             case "savingsaccount" ->
                     createSavingAccount(accountHolderDTO.getInitialBalance(), accountHolder, accountHolderDTO.getMinimumBalance(), accountHolderDTO.getInterestRate(), accountHolderDTO.getSecretKey());
             case "creditcard" ->
                     createCreditCard(accountHolder, accountHolderDTO.getMinimumBalance(), accountHolderDTO.getInterestRate(), accountHolderDTO.getSecretKey());
             case "checkingaccount" -> createCheckingAccount(accountHolderDTO.getInitialBalance(), accountHolder, accountHolderDTO.getSecretKey());
-            default -> throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect Account Type");
+            default ->{
+                roleRepository.delete(role);
+                userRepository.delete(accountHolder);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect Account Type");
+            }
         };
 
     }
 
     public Account createNewAccountByUser(CreateAccountDTO createAccountDTO){
-        AccountHolder accountHolder = accountHolderRepository.findById(createAccountDTO.getId()).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"The id is incorrect."));
+        AccountHolder accountHolder = accountHolderRepository.findById(createAccountDTO.getId()).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"The Account Holder id is incorrect."));
         return switch (createAccountDTO.getAccountType()) {
             case "savingsaccount" ->
                     createSavingAccount(createAccountDTO.getInitialBalance(), accountHolder, createAccountDTO.getMinimumBalance(), createAccountDTO.getInterestRate(), createAccountDTO.getSecretKey());
@@ -163,7 +168,7 @@ public class AdminService implements AdminServiceInterface {
     }
 
     public AccountHolder addPassword(Long userId, String password){
-        AccountHolder accountHolder = accountHolderRepository.findById(userId).orElseThrow();
+        AccountHolder accountHolder = accountHolderRepository.findById(userId).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"The Account Holder Id doesn't exist."));
         accountHolder.setPassword(passwordEncoder.encode("password"));
         return accountHolderRepository.save(accountHolder);
     }
@@ -173,6 +178,11 @@ public class AdminService implements AdminServiceInterface {
         userRepository.save(admin);
         roleRepository.save(new Role("ADMIN", admin));
         return admin;
+    }
+
+    public Money getBalanceAccount(Long accountId){
+        Account account = accountRepository.findById(accountId).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "The account Id doesn't exist."));
+        return account.getBalance();
     }
 
 }

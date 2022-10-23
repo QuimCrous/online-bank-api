@@ -3,6 +3,7 @@ package com.bankonline.Final_Project.controllers.users;
 import com.bankonline.Final_Project.DTOs.*;
 import com.bankonline.Final_Project.Service.users.interfaces.AdminServiceInterface;
 import com.bankonline.Final_Project.controllers.users.interfaces.AdminControllerInterface;
+import com.bankonline.Final_Project.embedables.Money;
 import com.bankonline.Final_Project.models.accounts.Account;
 import com.bankonline.Final_Project.models.users.AccountHolder;
 import com.bankonline.Final_Project.models.users.Admin;
@@ -81,5 +82,11 @@ public class AdminController implements AdminControllerInterface {
     public Admin createAdmin(@RequestBody AdminDTO adminDTO){
         return adminServiceInterface.createAdmin(adminDTO.getName(),adminDTO.getPassword());
     }/*test done*/
+
+    @GetMapping("/admin/get-balance")
+    @ResponseStatus(HttpStatus.OK)
+    public Money getBalanceAccount(@RequestParam Long id){
+        return adminServiceInterface.getBalanceAccount(id);
+    }
 
 }

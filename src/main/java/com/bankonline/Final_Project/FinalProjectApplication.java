@@ -62,6 +62,8 @@ public class FinalProjectApplication implements CommandLineRunner {
 		AccountHolder accountHolder4 = userRepository.save(new AccountHolder("Ganondorf",passwordEncoder.encode("1234"),"mail@mail.com","999888777", LocalDate.of(1987,05,04), new Address("street five,5","city5","77898","province5","country5")));
 		roleRepository.save(new Role("USER", accountHolder4));
 		ThirdPartyUser thirdPartyUser = userRepository.save(new ThirdPartyUser("Colmado Ganondorf","aa@1"));
+		AccountHolder accountHolder5 = userRepository.save(new AccountHolder("Ruto",passwordEncoder.encode("1234"),"laRudaLia@zora.com","999888777", LocalDate.of(2010,05,04), new Address("street five,6","city6","77898","province6","country6")));
+		roleRepository.save(new Role("USER", accountHolder5));
 
 		SavingsAccount savingsAccount = new SavingsAccount();
 		savingsAccount.setBalance(BigDecimal.valueOf(1000));
