@@ -92,3 +92,5 @@ There I have three classes where I tested the different methods if they work cor
 ### Credits
 
 Joaquim Crous Mayné - joaquimcrous@gmail.com
+
+Special thanks to my colleagues and the IronHack crew for the whole bootcamp experience!
